@@ -1,5 +1,7 @@
 # Auditoria técnica e arquitetural — controle remoto de terminais (TRCP)
 
+> **Atualização 2026-09-26:** o transporte (Tailscale, pairing por QR com endpoint do tailnet) foi **substituído** pela proposta aprovada em `proposta-conexao-por-codigo-2026-09-26.md` (ponte própria + código estilo AnyDesk + túnel cifrado ponta a ponta). O restante desta auditoria continua valendo.
+
 Data: 2026-09-26 · Escopo: proposta inicial (extensão VS Code + agente Rust +
 app Android) · Estado do repositório: só `README.md`, nenhum código.
 
