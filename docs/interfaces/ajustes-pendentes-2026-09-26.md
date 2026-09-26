@@ -1,5 +1,10 @@
 # Ajustes de interface pendentes (2026-09-26)
 
+> **Aprovação (2026-09-26):** Sr. Garioli aceitou as 13 recomendações
+> que pediam decisão (AJ-03, 04, 07, 08, 10, 11, 15, 16, 18, 19, 25, 33,
+> 34), junto com as 21 correções óbvias. AJ-22 e AJ-32 seguem para P5.
+> Próximo passo: aplicar os ajustes às telas, aos textos e ao protótipo.
+
 Status: **proposta para aprovação de Sr. Garioli.** Nada aqui foi aplicado
 às interfaces aprovadas (`android.md`, `vscode.md`, `textos.md`,
 `fluxos.md`, `visao.md`); este arquivo só junta, numa lista única, os
