@@ -9,6 +9,12 @@ na fase M6") e proposta §4.1, "Decisão da hospedagem adiada para a fase
 M6". Endereço da ponte padrão decidido por Sr. Garioli em 2026-09-26
 (`README.md` desta pasta, "Decididos depois da primeira versão", item 4).
 
+**Atualizado em 2026-09-26 (mais tarde no mesmo dia):** a ponte padrão
+pública foi substituída por ponte privada de Sr. Garioli; os demais
+usuários hospedam a própria ponte (`README.md` desta pasta, item 5;
+ADR-0004). A hospedagem que este ADR adia é só a de
+`ponte.gariolilabs.com`.
+
 ## Contexto
 
 - A ponte só é necessária na fase M6 (rede segura); antes disso o agente
@@ -37,12 +43,15 @@ M6". Endereço da ponte padrão decidido por Sr. Garioli em 2026-09-26
   §4.1).
 - Ação imediata e grátis: perguntar à operadora sobre IP público (proposta
   §4.1).
-- **O endereço padrão já está decidido; o lugar, não.** A extensão vem
-  configurada com `ponte.gariolilabs.com`, e quem quiser aponta para a
-  própria ponte, com o mesmo binário (decidido por Sr. Garioli,
-  2026-09-26; ADR-0004). **[INFERÊNCIA]** o nome DNS isola a escolha de
-  hospedagem: o domínio pode apontar para Raspberry, e2-micro, VPS ou
-  Cloud Run sem mudar a configuração dos clientes.
+- **O endereço já está decidido; o lugar, não.** `ponte.gariolilabs.com`
+  é a ponte **privada** de Sr. Garioli e de quem ele autorizar (decidido
+  por Sr. Garioli, 2026-09-26; ADR-0004). **[INFERÊNCIA]** o nome DNS
+  isola a escolha de hospedagem: o domínio pode apontar para Raspberry,
+  e2-micro, VPS ou Cloud Run sem mudar a configuração dos clientes.
+- **Não há ponte pública.** Os demais usuários rodam o mesmo binário no
+  servidor, VPS ou Raspberry deles e configuram o endereço na extensão na
+  primeira vez (ADR-0004). As duas exigências acima (binário único, dois
+  modos) valem também para essas pontes.
 
 ## Alternativas consideradas
 
@@ -51,6 +60,7 @@ M6". Endereço da ponte padrão decidido por Sr. Garioli em 2026-09-26
 | Decidir a hospedagem agora | Sem necessidade antes de M6; depende da resposta da operadora sobre IP público (proposta §4.1). |
 | Cloud Run 24/7 | ~US$ 43–61/mês (proposta §4.1). |
 | Ponte só em modo permanente | Impediria a opção sob demanda de custo perto de zero (proposta §4.1). |
+| Ponte pública para qualquer usuário | Substituída por ponte privada em 2026-09-26 (ADR-0004). |
 
 ## Consequências
 
@@ -60,6 +70,9 @@ M6". Endereço da ponte padrão decidido por Sr. Garioli em 2026-09-26
   (proposta §4.1).
 - O custo pode ficar entre zero e ~US$ 6/mês, conforme a opção (proposta
   §4.1).
+- **[INFERÊNCIA]** Com a ponte privada, a carga é de uso pessoal e de um
+  grupo pequeno autorizado; o dimensionamento cabe com folga no e2-micro
+  ou num Raspberry (`requisitos-nao-funcionais.md` DP-4, NFR-16).
 
 **Negativas**
 
@@ -73,9 +86,14 @@ M6". Endereço da ponte padrão decidido por Sr. Garioli em 2026-09-26
 - **[RECOMENDAÇÃO, não decisão]** Se a operadora liberar IP público, a
   ponte fica no Raspberry; senão, vai para um VPS, e o Raspberry fica em
   casa para acordar o PC por Wake-on-LAN (proposta §4.1).
+- Quem hospeda a própria ponte precisa de instruções de instalação do
+  `trc-bridge` (servidor, VPS, Raspberry), incluindo o aviso de CGNAT; é
+  documentação a escrever junto com P4/M6.
 
 ## Referências
 
-- `docs/proposta-conexao-por-codigo-2026-09-26.md` cabeçalho, §4.1, §8.
+- `docs/proposta-conexao-por-codigo-2026-09-26.md` cabeçalho, §3, §4.1,
+  §8.
 - `docs/auditoria-arquitetura-2026-09-26.md` §3 C5, §8, §13.
 - `docs/plans/00-mapa-do-planejamento.md` P4.
+- `docs/requisitos-nao-funcionais.md` DP-4, NFR-16.

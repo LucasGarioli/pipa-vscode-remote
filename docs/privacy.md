@@ -6,6 +6,11 @@ cada parte do sistema guarda, mostra, transmite e apaga, e por quanto
 tempo. Não é o texto jurídico da loja; os rascunhos públicos estão nos
 anexos A e B, rotulados **RASCUNHO**.
 
+Atualizado em 2026-09-26: `ponte.gariolilabs.com` é **privada** (só Sr.
+Garioli e quem ele autorizar); não há ponte pública, e os demais usuários
+rodam a própria ponte (ADR-0004, ADR-0006). §0.2, §2, §7, §11.1, §12.2,
+§14 (DP1), §15 (PA11) e os anexos A e B foram ajustados.
+
 Não muda telas aprovadas (`docs/interfaces/`) nem ADRs. Onde um documento
 aprovado conflita com outro, o conflito vai para §15 ("Pontos em aberto");
 onde é preciso escolher, vai para §14 ("Decisões pendentes").
@@ -32,10 +37,11 @@ onde é preciso escolher, vai para §14 ("Decisões pendentes").
 1. O conteúdo dos terminais (saída, tela, histórico, texto digitado) fica
    **no PC**. Ao celular vai só o que a pessoa abre, cifrado ponta a ponta,
    e **nada disso é gravado no celular** (ADR-0012).
-2. A ponte (`ponte.gariolilabs.com`, operada pela Garioli Labs) vê só
-   **metadados**: IPs, horários, volume, o ID de roteamento do PC e o
-   número de encontro de 4 dígitos. Nunca vê conteúdo nem chaves
-   (ADR-0004).
+2. A ponte vê só **metadados**: IPs, horários, volume, o ID de
+   roteamento do PC e o número de encontro de 4 dígitos. Nunca vê
+   conteúdo nem chaves (ADR-0004). `ponte.gariolilabs.com`, operada pela
+   Garioli Labs, é **privada**: serve só Sr. Garioli e quem ele
+   autorizar; os demais usuários rodam a própria ponte (§7.1).
 3. O Google (FCM) vê só um aviso opaco `{agent_id, attention_id}` e o
    identificador de instalação do app (ADR-0014).
 4. Não há conta, telemetria, analytics nem envio automático de relatório
@@ -74,8 +80,9 @@ onde é preciso escolher, vai para §14 ("Decisões pendentes").
                │ saída WSS                          saída WSS │
                ▼                                              ▼
         ┌──────────────────────────────────────────────────────────┐
-        │ Ponte (ponte.gariolilabs.com ou própria): vê IPs,        │
-        │ horários, volume, ID de roteamento, 4 dígitos de encontro │
+        │ Ponte (própria, ou ponte.gariolilabs.com, privada):      │
+        │ vê IPs, horários, volume, ID de roteamento,              │
+        │ 4 dígitos de encontro                                    │
         └──────────────────────────────────────────────────────────┘
                └──── túnel TLS 1.3 mútuo ponta a ponta (a ponte só
                      repassa registros cifrados) ────┘
@@ -324,9 +331,16 @@ retenção. **[PROPOSTA P6]**:
 
 **[DECIDIDO]** A ponte é burra por construção: associa um ID a uma
 conexão e copia bytes; sem disco, sem banco, sem chaves de sessão
-(ADR-0004; proposta §4). A ponte padrão é `ponte.gariolilabs.com`;
-quem não aceitar os metadados roda a própria ponte, com o mesmo binário
-(ADR-0004, ADR-0006).
+(ADR-0004; proposta §4).
+
+**[DECIDIDO]** Não há ponte pública padrão (Sr. Garioli, 2026-09-26;
+ADR-0004): `ponte.gariolilabs.com` é **privada** e serve só Sr. Garioli
+e quem ele autorizar, com chave de inscrição emitida por ele (formato,
+emissão e revogação em P4). Os demais usuários rodam a própria ponte, com
+o mesmo binário, num servidor, VPS ou Raspberry (ADR-0006). Assim, a
+Garioli Labs só opera metadados de usuários autorizados. O que esta seção
+diz do "operador" vale para a Garioli Labs nesses casos e, nas pontes
+próprias, para quem as opera (BR-6).
 
 | Vê | Nunca vê |
 |---|---|
@@ -384,11 +398,18 @@ hora de uso de uma determinada aplicação de internet a partir de um
 determinado endereço IP". O §3º exige ordem judicial para entregá-los.
 
 **[INFERÊNCIA]** Se a Garioli Labs for pessoa jurídica e operar a ponte
-padrão com fins econômicos (por exemplo, se a Pipa for paga ou fizer parte
+com fins econômicos (por exemplo, se a Pipa for paga ou fizer parte
 de uma oferta paga), ela pode estar obrigada a guardar IP + data e hora
 de uso por 6 meses. Isso **conflita** com "sem disco" do ADR-0004
 (PA4) e muda a retenção de BR-1. Não cabe a este documento decidir:
 DP1.
+
+**[INFERÊNCIA]** Com a ponte privada (decisão de 2026-09-26),
+`ponte.gariolilabs.com` deixa de ser oferecida ao público: atende Sr.
+Garioli e quem ele autorizar. Isso provavelmente diminui o peso do art.
+15 (uso pessoal e de convidados, sem oferta ao público), mas não o afasta
+por si só; o parecer jurídico antes de M6 (DP1, opção c) continua. As
+pontes próprias de outros usuários são de quem as opera.
 
 ## 8. Push pelo FCM (ADR-0014)
 
@@ -497,8 +518,9 @@ fonte diz outra coisa.
   escrita continua protegida pela biometria ou PIN (ADR-0003).
 - Antes de desinstalar o app: remover os PCs pelo próprio app, para o PC
   apagar o registro e o token.
-- Para não usar a ponte padrão: apontar `pipa.bridge` para uma ponte
-  própria.
+- Não há ponte pública: quem não foi autorizado por Sr. Garioli instala
+  a própria ponte (`trc-bridge`) num servidor, VPS ou Raspberry e informa
+  o endereço na extensão (`pipa.bridge`) na primeira vez.
 
 ## 12. LGPD
 
@@ -553,7 +575,8 @@ conferido em 2026-09-26:
 | Tratamento | Quem é o controlador | Base legal provável | Observação |
 |---|---|---|---|
 | Conteúdo dos terminais, avisos, audit, aparelhos, no PC e no celular do usuário | o próprio usuário (ou o empregador dele, em uso profissional); a Garioli Labs **não acessa** | — | software local: a Garioli Labs não trata esses dados; em uso pessoal, art. 4º I |
-| Metadados na ponte padrão (IP, horários, volume, ID de roteamento) | Garioli Labs | execução do serviço pedido pelo usuário (art. 7º V); anti-abuso por legítimo interesse (art. 7º IX) | provedor de hospedagem = operador |
+| Metadados na ponte privada `ponte.gariolilabs.com` (IP, horários, volume, ID de roteamento), só de Sr. Garioli e de quem ele autorizar | Garioli Labs | execução do serviço pedido pelo usuário (art. 7º V); anti-abuso por legítimo interesse (art. 7º IX) | provedor de hospedagem = operador |
+| Metadados numa ponte própria de outro usuário | quem opera essa ponte | — | a Garioli Labs não recebe nada |
 | Registros de acesso, se DP1 concluir que são obrigatórios | Garioli Labs | obrigação legal (art. 7º II; Marco Civil art. 15) | retenção de 6 meses; eliminação só depois (art. 16 I) |
 | Push pelo FCM (ID de instalação, payload opaco) | Garioli Labs (dona do projeto Firebase) | execução do serviço (art. 7º V) | Google = operador para o FCM; transferência internacional (art. 33) |
 | Contato de suporte ou privacidade (e-mail) | Garioli Labs | pedido do titular | fora do produto |
@@ -610,7 +633,8 @@ Notas da spec §16:
 
 ## 14. Decisões pendentes (Sr. Garioli)
 
-**DP1 — Registros de acesso na ponte padrão (Marco Civil art. 15).**
+**DP1 — Registros de acesso na ponte da Garioli Labs (Marco Civil art.
+15).**
 
 - (a) Zero registro, como hoje (ADR-0004). Exige parecer de que o art. 15
   não se aplica (por exemplo, serviço sem fins econômicos). Risco: se a
@@ -620,10 +644,15 @@ Notas da spec §16:
   Exige um ADR que emende o "sem disco" do ADR-0004.
 - (c) Pedir parecer jurídico antes de M6 e, enquanto isso, P4 desenha a
   ponte com um registro de acesso **opcional e desligado por padrão**,
-  que a ponte padrão liga só se o parecer exigir; pontes próprias ficam
+  que `ponte.gariolilabs.com` liga só se o parecer exigir; pontes
+  próprias ficam
   sem registro.
 - **Recomendação: (c).** Não muda nenhum ADR agora, não bloqueia M0–M5 e
-  evita retrabalho em M6.
+  evita retrabalho em M6. **DECIDIDA 2026-09-26 por Sr. Garioli: opção (c).**
+- **Nota de 2026-09-26:** com a ponte privada (ADR-0004), a ponte da
+  Garioli Labs atende só usuários autorizados. **[INFERÊNCIA]** a
+  questão provavelmente diminui; a opção (c), com parecer antes de M6,
+  continua valendo.
 
 **DP2 — Quem é o controlador e qual é o canal de privacidade.**
 
@@ -634,7 +663,7 @@ Notas da spec §16:
 - (c) Sr. Garioli como pessoa natural controladora.
 - **Recomendação: (a).** Indicar encarregado conta como boa prática (Res.
   2/2022 art. 11 §2º) e custa um endereço de e-mail. Falta saber a forma
-  jurídica e o CNPJ da Garioli Labs para preencher o Anexo A.
+  jurídica e o CNPJ da Garioli Labs para preencher o Anexo A. **DECIDIDA 2026-09-26 por Sr. Garioli: opção (a). Forma jurídica e CNPJ PENDENTES.**
 
 **DP3 — `pipa.audit.input` (texto digitado no audit).** Conflito: ADR-0012
 diz "input digitado nunca persistido em lugar nenhum"; `devices.audit_note`
@@ -651,7 +680,7 @@ spec R6.25 permitem gravá-lo no PC com a opção ligada (spec §19.2 item
 - (c) Manter como está: a nota fica falsa para quem ligar a opção.
 - **Recomendação: (a).** Senhas digitadas pelo celular (por exemplo num
   `sudo`) iriam para um banco em disco sem cifra; o ganho de auditoria não
-  compensa, e (a) mantém a promessa do ADR-0012.
+  compensa, e (a) mantém a promessa do ADR-0012. **DECIDIDA 2026-09-26 por Sr. Garioli: opção (a).**
 
 **DP4 — Ponte fora do Brasil e transferência internacional.** Junto com a
 decisão de hospedagem de M6 (ADR-0006).
@@ -661,7 +690,7 @@ decisão de hospedagem de M6 (ADR-0006).
   provedor (cláusulas contratuais), declarando na política pública.
 - **Recomendação:** decidir em M6 com o custo na mão; em qualquer caso, a
   política pública declara o país. O FCM já é transferência internacional
-  inevitável (Google), a declarar do mesmo jeito.
+  inevitável (Google), a declarar do mesmo jeito. **Continua pendente: decidir em M6.**
 
 **DP5 — Guardar contexto e pedidos em disco (auditoria §7.2).** A
 auditoria propõe SQLite com sessão e contexto por 7 dias depois do fim e
@@ -671,7 +700,7 @@ pedidos por 7 dias. A spec adotou só o registro mínimo para `lost`
 - (a) Só memória para contexto, pedidos e avisos EX1 (esta proposta,
   §3.1); o audit já guarda as decisões como metadados.
 - (b) Seguir a auditoria: 7 dias em disco.
-- **Recomendação: (a).** Nome de terminal e comando são conteúdo sensível
+- **Recomendação: (a).** Nome de terminal e comando são conteúdo sensível e devem ficar só em memória. **DECIDIDA 2026-09-26 por Sr. Garioli: opção (a).**
   (Q2); nenhuma tela aprovada mostra contexto de sessões encerradas há
   mais de 60 min.
 
@@ -686,15 +715,15 @@ faz isso.
 - (c) Apagar sozinho ao desinstalar a extensão. **[INFERÊNCIA]**
   arriscado: reinstalar a extensão perderia todos os pareamentos sem
   aviso.
-- **Recomendação: (b) no MVP e (a) na próxima revisão de interface.**
+- **Recomendação: (b) no MVP e (a) na próxima revisão de interface.** **DECIDIDA 2026-09-26 por Sr. Garioli: opção (b) no MVP.**
 
 ## 15. Pontos em aberto
 
 | # | Ponto | Documentos | Dono |
 |---|---|---|---|
 | PA1 | Quando a tela some do celular: `interfaces/android.md` §0 diz "mais de 5 min fora do primeiro plano"; spec PV2 diz "ao sair do app ou perder a rede". A tela aprovada prevalece; sugiro que P3 ajuste o texto de PV2. | android.md §0; spec PV2; fluxo X7 | P3, P7 |
-| PA2 | `audit_input` contra ADR-0012 e `devices.audit_note`. | ADR-0012; spec §19.2 item 31 | DP3 |
-| PA3 | Retenção de contexto e pedidos: auditoria §7.2 contra spec D-18. | auditoria §7.2; spec R8.5 | DP5 |
+| PA2 | `audit_input` contra ADR-0012 e `devices.audit_note`. | ADR-0012; spec §19.2 item 31 | Resolvido por DP3 |
+| PA3 | Retenção de contexto e pedidos: auditoria §7.2 contra spec D-18. | auditoria §7.2; spec R8.5 | Resolvido por DP5 |
 | PA4 | "Ponte sem disco" contra a possível guarda obrigatória de registros de acesso. | ADR-0004; Marco Civil art. 15 | DP1, P4 |
 | PA5 | Remover o PC com o PC offline: `device.forget` exige conexão (R10.36); o fluxo F6 não diz o que acontece se não houver. Sugestão: o celular apaga localmente mesmo assim e avisa para revogar no PC. | fluxo F6; spec R10.36 | P7, P3 |
 | PA6 | A notificação usa `VISIBILITY_PUBLIC` e mostra o nome do PC na tela de bloqueio; o nome padrão é o hostname, que costuma ter o nome da pessoa ("LUCAS-PC"). Sugestão para P7 avaliar: versão pública genérica (`notif.attn_unknown`). | android.md §11; spec E1 | P7 |
@@ -702,7 +731,7 @@ faz isso.
 | PA8 | Quem envia o push: a ponte enviar dá ao operador o token e a hora dos pedidos de cada PC (§8.2). | ADR-0014; spec §19.2 item 15 | P4, P5, M8 |
 | PA9 | Consulta de presença (E2): a ponte fica sabendo qual celular pergunta por qual PC. P4 deve evitar identificar o celular na consulta. | exigências E2; spec §17 | P4 |
 | PA10 | Atualização e distribuição do agente: nenhuma chamada de rede descrita; se houver, entra em §9 antes do código. | — | P9 |
-| PA11 | Chave de inscrição da ponte padrão: se for por usuário, vira um identificador guardado pelo operador. | ADR README ponto 3 | P4 |
+| PA11 | Chave de inscrição da ponte privada (emitida por Sr. Garioli a quem ele autoriza): se for uma por pessoa, vira um identificador guardado pelo operador e entra em §3.3 quando P4 fechar o formato. | ADR README ponto 3 | P4 |
 | PA12 | Formulário da Play: tratamento de IP e metadados de conexão enviados à ponte (Anexo B, item 6) precisa ser conferido na submissão. | Anexo B | M8 / publicação |
 | PA13 | Avisos EX1 na notificação: o texto aprovado é opaco (`notif.attn`); mostrar o título do aviso (buscado pelo túnel, nunca pelo push) muda tela e visibilidade na tela de bloqueio. Também falta onde o aviso aparece no app e como silenciar uma origem. | EX1; android.md §11 | P7 |
 | PA14 | Avisos EX1: autenticação de quem chama e se o agente guarda uma lista de origens autorizadas (dado novo no PC). | EX1 | P5, P3 |
@@ -776,15 +805,18 @@ de consumo) seguem o mesmo caminho cifrado e também não são gravados no
 celular. Nós não temos acesso a nada disso.
 
 **O que a ponte vê.** Para o celular achar o computador de qualquer rede,
-a conexão passa por uma ponte. A ponte padrão (`ponte.gariolilabs.com`) é
-operada por nós. Tudo o que passa por ela é cifrado de ponta a ponta entre
-o seu celular e o seu computador: a ponte não consegue ler. Ela vê apenas
+a conexão passa por uma ponte. Não oferecemos ponte pública: você usa a
+sua própria ponte (o mesmo programa, instalado num servidor seu, num VPS
+ou num Raspberry) e informa o endereço dela na extensão. A nossa ponte
+(`ponte.gariolilabs.com`) é privada e só atende pessoas que autorizamos.
+Em qualquer ponte, tudo o que passa é cifrado de ponta a ponta entre o
+seu celular e o seu computador: a ponte não consegue ler. Ela vê apenas
 os endereços IP, os horários, a quantidade de dados, um identificador do
 computador e, durante o pareamento, os 4 primeiros dígitos do código.
-Guardamos esses dados só em memória, enquanto a conexão existe
-{ou: "e, por obrigação legal, guardamos IP, data e hora de acesso por 6
-meses, sob sigilo"}. Você pode usar a sua própria ponte e não passar pela
-nossa.
+Na sua própria ponte, só você vê esses dados. Na nossa, se você foi
+autorizado, guardamos esses dados só em memória, enquanto a conexão
+existe {ou: "e, por obrigação legal, guardamos IP, data e hora de acesso
+por 6 meses, sob sigilo"}.
 
 **Notificações.** Para avisar que algo pede sua atenção, usamos o Firebase
 Cloud Messaging, do Google. O aviso leva só dois identificadores
@@ -795,8 +827,9 @@ recebe o identificador de instalação do app para entregar o aviso.
 publicidade nem relatórios de erro automáticos. Não vendemos nem
 compartilhamos dados.
 
-**Onde os dados são tratados.** A ponte fica em {país}. O Google pode
-tratar os dados do aviso fora do Brasil.
+**Onde os dados são tratados.** A nossa ponte privada fica em {país}; a
+sua ponte fica onde você a instalar. O Google pode tratar os dados do
+aviso fora do Brasil.
 
 **Seus direitos.** Pela LGPD, você pode pedir confirmação, acesso,
 correção e eliminação dos dados que tratamos, entre outros direitos, pelo
@@ -824,7 +857,7 @@ que colete dados novos.
 | 3 | Finalidade | **Funcionalidade do app** (entregar avisos). | ADR-0014. |
 | 4 | Coleta obrigatória ou opcional? | **[INFERÊNCIA]** Opcional se o app só registrar o token depois que a pessoa permitir notificações; obrigatória se registrar sempre. Definir em M8. | — |
 | 5 | Conteúdo dos terminais, comandos, nomes, avisos | **Não declarado.** | Cifrado ponta a ponta, ilegível para a Garioli Labs. |
-| 6 | IP e metadados de conexão na ponte | **Não declarado**, se a ponte só os processa em memória (BR-1). **Declarar** se DP1 levar à guarda de registros. | **[INFERÊNCIA]** Processamento efêmero; conferir na submissão (PA12). |
+| 6 | IP e metadados de conexão na ponte | **Não declarado**, se a ponte só os processa em memória (BR-1). **Declarar** se DP1 levar à guarda de registros. | **[INFERÊNCIA]** Processamento efêmero; conferir na submissão (PA12). Na ponte própria do usuário, a Garioli Labs não recebe nada. |
 | 7 | Compartilhamento com terceiros | **Não.** | O Google atua como prestador de serviço do FCM. |
 | 8 | Dados cifrados em trânsito? | **Sim.** | Túnel TLS; FCM por HTTPS. |
 | 9 | O usuário pode pedir a exclusão? | **Sim**: remover o PC no app (dispara PS-1), desinstalar, ou pedir pelo e-mail de privacidade. | §11. |

@@ -651,8 +651,8 @@ não deixar o terminal do dia a dia mais lento.
 
 - Meta: processo ocioso ≤ 15 MB de RSS; **≤ 64 KB por conexão ociosa** e
   ≤ 256 KB por conexão com tráfego.
-- Condição: B-US (ou VM Linux equivalente), 0, 100 e 1 000 agentes
-  registrados, e 0 a 50 pares ativos em C2.
+- Condição: B-US (ou VM Linux equivalente), 0, 10 e 100 agentes
+  registrados, e 0 a 50 pares ativos em C2 (revisto em 2026-09-26, DP-4).
 - Método: `VmRSS` de `/proc/<pid>/status` a 1 Hz; `ss -tmi` para a
   memória dos sockets; inclinação contra o número de conexões.
 - Aprovação: inclinação e máximo.
@@ -662,14 +662,14 @@ não deixar o terminal do dia a dia mais lento.
 
 **NFR-16 — Ponte: capacidade num e2-micro**
 
-- Meta (dimensionamento de DP-4, opção recomendada, medido a 10 vezes
-  a carga esperada):
-  - **1 000 agentes registrados** ociosos e **50 pares ativos** em C2 ao
+- Meta (dimensionamento de DP-4, revisto em 2026-09-26 para ~10 PCs e
+  5 pares ativos, medido a 10 vezes a carga esperada):
+  - **100 agentes registrados** ociosos e **50 pares ativos** em C2 ao
     mesmo tempo;
   - CPU média ≤ 20 % do tempo de CPU da VM, abaixo dos 25 % sustentados
     do e2-micro, sem depender da rajada;
   - memória total da VM ≤ 700 MB;
-  - reinício da ponte: os 1 000 agentes se registram de novo em ≤ 60 s,
+  - reinício da ponte: os 100 agentes se registram de novo em ≤ 60 s,
     com espera aleatória.
 - Condição: B-US, gerador de carga que abre conexões reais (P9).
 - Método: `mpstat`/`top` da VM, contadores da ponte, relógio do
@@ -692,7 +692,7 @@ não deixar o terminal do dia a dia mais lento.
 
 **NFR-18 — Ponte: saída de dados**
 
-- Meta: acompanhamento, não aprovação: saída mensal da ponte padrão
+- Meta: acompanhamento, não aprovação: saída mensal da ponte privada
   medida e comparada com a estimativa de §2.8; alerta acima de 1 GB/mês.
 - Método: contadores de bytes da ponte e faturamento do provedor.
 - Fase: M6 em diante.
@@ -1194,7 +1194,7 @@ pelas linhas mais antigas.
   colunas).
 - C. Histórico compacto de até 5 000 linhas. Mais histórico, mais código
   no agente; depende do emulador (M0).
-- **Recomendação: B agora; o M0 avalia C.**
+- **Recomendação: B agora; o M0 avalia C.** **DECIDIDA 2026-09-26 por Sr. Garioli: opção B.**
 
 **DP-2 — Meta de latência no 4G**
 
@@ -1207,7 +1207,7 @@ controlamos (§2.6).
 - B. **Wi-Fi: 150 / 400 ms p95; 4G: 250 / 500 ms p95.**
 - C. Metas só de p50.
 - **Recomendação: B.** O celular manda o texto composto no campo, não
-  tecla por tecla (proposta §4.1), então 250 ms no 4G ainda é imediato
+  tecla por tecla (proposta §4.1), então 250 ms no 4G ainda é imediato **DECIDIDA 2026-09-26 por Sr. Garioli: opção B.**
   para quem aperta Enviar.
 
 **DP-3 — Teto de dados por terminal aberto**
@@ -1222,9 +1222,9 @@ célula pode passar de 100 MB por minuto (§2.5).
   segundo. Não muda o protocolo (mandar menos frames já é permitido).
 - C. Modo "economia de dados" escolhido no app. Exige tela, texto e
   campo novo no protocolo.
-- **Recomendação: B**, com o número validado no M6/M7.
+- **Recomendação: B**, com o número validado no M6/M7. **DECIDIDA 2026-09-26 por Sr. Garioli: opção B.**
 
-**DP-4 — Tamanho da ponte padrão (`ponte.gariolilabs.com`)**
+**DP-4 — Tamanho da ponte da Garioli Labs (`ponte.gariolilabs.com`)**
 
 O ADR-0004 deixa para P4 como terceiros entram na ponte padrão; o
 dimensionamento depende disso.
@@ -1234,8 +1234,16 @@ dimensionamento depende disso.
   ativos**, medido a 10 vezes isso num e2-micro (NFR-16).
 - C. Ponte pública (centenas ou milhares de PCs): exige outro plano de
   hospedagem e custo.
-- **Recomendação: B.** Cabe no e2-micro com folga pela estimativa e não
+- **Recomendação: B.** Cabe no e2-micro com folga pela estimativa e não **DECIDIDA 2026-09-26 por Sr. Garioli: opção B.**
   fecha a porta para C.
+- **Revisão de 2026-09-26, por consequência de outra decisão (não é nova
+  escolha de Sr. Garioli; ele pode rever):** depois de escolher B, Sr.
+  Garioli decidiu que `ponte.gariolilabs.com` é **privada**: só ele e
+  quem ele autorizar; os demais usam ponte própria (ADR-0004). Com isso,
+  B fica superdimensionada. O dimensionamento passa a **~10 PCs
+  registrados e 5 pares ativos**, testado a 10 vezes isso (100 agentes e
+  50 pares; NFR-15, NFR-16). As pontes próprias de outros usuários usam
+  as mesmas metas.
 
 **DP-5 — Aparelhos de referência no Android**
 
@@ -1245,7 +1253,7 @@ dimensionamento depende disso.
 - B. A + um Pixel 6 ou mais novo, para medir energia em mW (Power
   Profiler e `PowerMetric` só funcionam nele).
 - C. B + um aparelho físico de entrada.
-- **Recomendação: A no MVP.** As metas que importam para bateria (nada
+- **Recomendação: A no MVP.** As metas que importam para bateria (nada **DECIDIDA 2026-09-26 por Sr. Garioli: opção A.**
   em segundo plano, NFR-30 e NFR-31) não precisam de mW.
 
 **DP-6 — Enviar texto enquanto o Claude Code trabalha**
@@ -1260,7 +1268,7 @@ vindas do adaptador funcionam.
   (P7), revisão de segurança (P5).
 - C. Afrouxar a precondição (ex.: ignorar mudanças numa linha de status).
   Muda a spec e a segurança do envio.
-- **Recomendação: A**, com o gatilho de NFR-27 (acima de 20 % em C2, a
+- **Recomendação: A**, com o gatilho de NFR-27 (acima de 20 % em C2, a **DECIDIDA 2026-09-26 por Sr. Garioli: opção A.**
   decisão volta com os números medidos).
 
 ## 7. Pontos em aberto
@@ -1305,7 +1313,7 @@ resolvido aqui.
 | NFR-13 | Memória do app | PSS ≤ 150 MB, sem vazamento | M7 |
 | NFR-14 | Fluidez | `frameOverrunMs` p95 ≤ 0 | M7 |
 | NFR-15 | Ponte: memória | ≤ 64 KB por conexão ociosa | M6 |
-| NFR-16 | Ponte: capacidade (e2-micro) | 1 000 agentes + 50 pares, CPU ≤ 20 % | M6 |
+| NFR-16 | Ponte: capacidade (e2-micro) | 100 agentes + 50 pares, CPU ≤ 20 % | M6 |
 | NFR-17 | Ponte: repasse | p99 ≤ 2 ms | M6 |
 | NFR-18 | Ponte: saída de dados | acompanhamento, alerta > 1 GB/mês | M6+ |
 | NFR-20 | Enviar → eco, ponte BR | p95 ≤ 150 ms Wi-Fi (4G: DP-2) | M6, M7 |

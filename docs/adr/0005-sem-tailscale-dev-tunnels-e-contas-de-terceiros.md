@@ -9,6 +9,10 @@ proposta como direção (cabeçalho da proposta); `visao.md`, "O que não faz
 (no MVP)": "Não depende de Tailscale, Microsoft Dev Tunnels ou contas de
 terceiros".
 
+**Atualizado em 2026-09-26:** a consequência sobre a ponte da Garioli Labs
+passou a refletir a ponte privada (`README.md` desta pasta, item 5;
+ADR-0004). A decisão deste ADR não mudou.
+
 ## Contexto
 
 A auditoria desenhou o transporte sobre Tailscale (listener TLS no IP
@@ -83,13 +87,13 @@ aplicaria.
   abuso ficam por conta dele (ADR-0006; proposta §7).
 - Perde-se o NAT traversal pronto do Tailscale; o MVP vai sempre via ponte
   (proposta §4).
-- Para usuários que não sejam Sr. Garioli, a ponte padrão
-  `ponte.gariolilabs.com` é operada pela Garioli Labs e vê só metadados;
-  quem quiser aponta para a própria ponte (decidido por Sr. Garioli,
-  2026-09-26; ADR-0004). **[INFERÊNCIA]** a ponte padrão não exige conta
-  nem login do usuário, então o requisito "sem contas de terceiros"
-  continua valendo; como o PC obtém a chave de inscrição dela fica para
-  P4.
+- `ponte.gariolilabs.com` é **privada**: é operada pela Garioli Labs, vê
+  só metadados e serve só Sr. Garioli e quem ele autorizar, com chave de
+  inscrição emitida por ele. Os demais usuários hospedam a própria ponte,
+  com o mesmo binário (decidido por Sr. Garioli, 2026-09-26; ADR-0004).
+  **[INFERÊNCIA]** nenhum dos dois caminhos exige conta nem login de
+  terceiro, então o requisito "sem contas de terceiros" continua valendo;
+  formato, emissão e revogação da chave de inscrição ficam para P4.
 - O push usa o FCM, do Google, que vê só IDs opacos (ADR-0014).
   **[INFERÊNCIA]** é a única dependência de serviço de terceiro no MVP;
   quem guarda a credencial de envio do FCM é ponto aberto (ADR-0014).

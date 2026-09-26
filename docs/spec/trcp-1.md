@@ -55,8 +55,10 @@ Base, já decidida e não reaberta aqui:
      túnel; UnifiedPush fica fora do MVP;
   3. liberar escrita aceita biometria forte **ou** credencial do aparelho
      (PIN/padrão);
-  4. ponte padrão `ponte.gariolilabs.com`, configurável para uma ponte
-     própria (o mesmo binário).
+  4. ponte `ponte.gariolilabs.com` **privada** (só Sr. Garioli e quem
+     ele autorizar, com chave de inscrição emitida por ele); não há ponte
+     pública, e os demais usam a própria ponte, com o mesmo binário
+     (revista em 2026-09-26; `docs/adr/README.md` item 5).
 - requisito derivado do ADR-0002, pedido por P2 durante esta entrega: o
   agente informa se o perfil "Terminal remoto" é o padrão no PC, para o
   celular mostrar o estado vazio certo depois de um "não" (§11.7,
@@ -226,8 +228,9 @@ O que cada perfil pode fazer:
 De fora para dentro:
 
 1. conexão de saída do celular e do agente até a ponte (WSS; formato e
-   modos em **P4**; ponte padrão `ponte.gariolilabs.com`, configurável
-   para uma ponte própria com o mesmo binário, decisão 4 e ADR-0004);
+   modos em **P4**; a ponte configurada na extensão: a própria do
+   usuário ou, para Sr. Garioli e quem ele autorizar, a privada
+   `ponte.gariolilabs.com`, com o mesmo binário, decisão 4 e ADR-0004);
 2. fluxo de bytes repassado pela ponte, que não o interpreta;
 3. **TLS 1.3 mútuo com chaves fixadas** no pareamento, ponta a ponta entre
    agente e celular (**P5**);
@@ -1400,8 +1403,9 @@ encontro na ponte (**P4**) e a criptografia (**P5**), e avisa a extensão.
 | `pair.status` | `{}` | `{state, expires_at?, device_name?}` |
 
 - `code`: os 12 dígitos como texto (`"482191372055"`); a tela agrupa
-  `4821 · 9137 2055`. `bridge`: o endereço da ponte em uso (padrão
-  `ponte.gariolilabs.com`, decisão 4).
+  `4821 · 9137 2055`. `bridge`: o endereço da ponte em uso (o de
+  `pipa.bridge`; no uso de Sr. Garioli, `ponte.gariolilabs.com`,
+  decisão 4).
 - `state`: `idle`, `waiting` (código na tela), `claimed` (esperando
   Permitir/Recusar).
 - **R10.37** Um pareamento por vez por agente. `pair.start` com outro em
@@ -2514,7 +2518,7 @@ retenção. Esta spec só fixa o que o formato das mensagens garante.
 
 | Dono | O que o TRCP supõe ou deixa para lá |
 |---|---|
-| **P4** ponte | Transporte até a ponte; encontro por código; modos permanente e sob demanda; presença `presence{agent_id} → {online, since}` para "offline desde 14:02" (E2); se a ponte sabe do corte (E20); endereço padrão `ponte.gariolilabs.com` e ponte própria (decisão 4); com P5, o QR `pipa://pair?c=…&b=…&v=1` (exigências P5); com M8, quem envia o push. |
+| **P4** ponte | Transporte até a ponte; encontro por código; modos permanente e sob demanda; presença `presence{agent_id} → {online, since}` para "offline desde 14:02" (E2); se a ponte sabe do corte (E20); ponte privada `ponte.gariolilabs.com` com chave de inscrição emitida por Sr. Garioli e ponte própria dos demais usuários (decisão 4); com P5, o QR `pipa://pair?c=…&b=…&v=1` (exigências P5); com M8, quem envia o push. |
 | **P5** segurança | SPAKE2 e o código de confirmação de 6 dígitos (P1); `device_name` dentro do canal SPAKE2 (P2); TLS mútuo fixado; guarda das chaves; formato do step-up (R6.13) e chave que aceita biometria ou credencial do aparelho (decisão 3); `auth.proof` e channel binding (R5.7); completar TLS com chave revogada (R6.3); nome e verificação do pipe local (§3.2); quem marca `destructive` (com M5); revisão das decisões de §19.1. |
 | **P6** privacidade | Redação (PV9); retenções (PV11); campos do Context; `audit_input`; tela depois do fim; registro de sessões para `lost`. |
 | **P8** requisitos não funcionais | Todos os números [P8]; latência da tecla no celular ao eco na tela (auditoria §13: ≤ 150 ms p95; a proposta de conexão por código mantém essa meta com ponte no Brasil e propõe ≤ 400 ms p95 com ponte nos EUA); taxa de `stale` em terminais que não param de mudar. |

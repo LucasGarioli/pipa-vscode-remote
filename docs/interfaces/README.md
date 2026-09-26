@@ -170,3 +170,10 @@ Motivos em `android.md` §15.
 - O protótipo é regenerado por `prototipo/ferramentas/build.py`, que lê
   `proto.src.html` e `textos.catalogo.json`. Os textos são regenerados por
   `gen_textos.py`.
+
+## Ajustes pendentes
+
+Os ajustes de tela e texto pedidos pelas entregas de planejamento, ainda
+não aplicados às interfaces aprovadas, estão numa lista única para
+aprovação de Sr. Garioli:
+[`ajustes-pendentes-2026-09-26.md`](ajustes-pendentes-2026-09-26.md).
