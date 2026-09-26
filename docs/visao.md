@@ -53,11 +53,11 @@ segurança, praticidade e leveza:
 
 ## O que faz
 
-- Mostra no celular todos os terminais abertos no VS Code, com estado e
-  contexto mínimo.
+- Mostra no celular os terminais abertos pelo perfil Terminal remoto (o
+  padrão, se você aceitar), com estado e contexto mínimo.
 - Mostra a tela de um terminal sob demanda, com histórico paginado.
 - Envia comandos e teclas especiais, depois de liberar a escrita com
-  biometria.
+  biometria ou PIN.
 - Responde aprovações estruturadas, como as permissões do Claude Code.
 - Avisa quando algo pede atenção.
 - Conecta por código de 12 dígitos, via ponte própria, com túnel cifrado
@@ -69,6 +69,8 @@ segurança, praticidade e leveza:
 - Não controla terminais abertos fora do perfil "Terminal remoto".
 - Não guarda no celular o conteúdo das telas.
 - Não depende de Tailscale, Microsoft Dev Tunnels ou contas de terceiros.
+- Não oferece servidor público: cada pessoa usa a própria ponte (servidor,
+  VPS ou Raspberry); a da Garioli Labs é privada.
 - Não roda no iOS.
 
 ## Decisões de interface (2026-09-26)

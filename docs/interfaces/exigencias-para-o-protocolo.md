@@ -25,7 +25,7 @@ Legenda de prioridade:
 |---|---|---|---|---|
 | E1 | Lista de computadores, títulos, notificação: "LUCAS-PC" | `Agent` não tem nome | `hello` do servidor ganha `agent_name` (hostname do Windows, editável no VS Code). O celular guarda `{agent_id, agent_name, bridge, fingerprint}` como **dado de pareamento** (não é conteúdo de tela). | M |
 | E2 | "offline desde 14:02" | Nada informa quando o agente sumiu | A ponte responde a uma consulta de presença autenticada pelo celular: `presence{agent_id} → {online, since}`. Substituto: o celular mostra a hora do último contato que ele mesmo teve. | D |
-| E3 | "1 pedido esperando" na lista de computadores, antes de abrir o PC | Só vem no `snapshot` depois do `resume` completo | Contagem no `auth.ok`: `summary{sessions, open_attentions}`. Evita assinar o log inteiro só para montar a lista. | D |
+| E3 | "1 pedido esperando" na lista de computadores, antes de abrir o PC | Só vem no `snapshot` depois do `resume` completo | Contagem no `auth.ok`: `summary{sessions, open_attentions, open_notices}` (avisos: AJ-07). Evita assinar o log inteiro só para montar a lista. | D |
 | E4 | Folha "Liberar escrita": opções 1/5/15 min, "no máximo {n} min", "escrita desativada no PC" | A política do PC não é exposta | `auth.ok.policy{write_enabled, arm_max_min, arm_choices_min[]}`, e um evento `policy.changed` no log. | M |
 | E5 | Liberar escrita: contagem regressiva, "retirada no PC" | Não há comando de *arm*. `Grant.armed_until` existe, mas não o fluxo | Comando `grant.arm{s, minutes, step_up}` → `result.data{armed_until, remaining_ms}`, e `grant.disarm{s}`. Eventos `grant.armed` e `grant.disarmed{by: device\|pc\|expiry\|cut}`. A contagem usa `remaining_ms` (o relógio do celular não é confiável), e o celular recalcula a partir do recebimento. | M |
 | E6 | Biometria para liberar escrita, permitir destrutivo e encerrar | "step-up" citado, sem formato | `step_up = {nonce, sig}`, com `sig = ECDSA(chave com setUserAuthenticationRequired, "trcp-stepup-v1" ‖ nonce ‖ cmd_hash)`. O `nonce` vem de `cmd step_up.challenge{purpose}`, uso único e 60 s de validade. | M |
@@ -36,7 +36,7 @@ Legenda de prioridade:
 | E11 | Lista de terminais: "aguardando permissão" vs "aguardando você" | `waiting` sem distinção de tipo | O estado vem de `SessionStatus=waiting` + `open_attentions` da sessão. Basta o evento `attention.opened` carregar `session_id` (já carrega). Confirmar isso na spec. | — |
 | E12 | Terminal: "120×32 (VS Code)" | `screen` tem `cols, rows` | ok, sem exigência | — |
 | E13 | Histórico: "Início do histórico guardado no PC" | `screen.history` não diz se acabou | `result.data{lines[], first_line, reached_start: bool}` | M |
-| E14 | Envio: mensagens distintas para tela mudou / escrita expirou / grande demais / limite | Só `stale` e `already_resolved` definidos | Enumerar `code`: `stale`, `not_armed`, `too_large`, `rate_limited`, `session_ended`, `already_resolved`, `step_up_required`, `step_up_invalid`, `policy_off`. Cada código tem texto próprio em `textos.md`. | M |
+| E14 | Envio: mensagens distintas para tela mudou / escrita expirou / grande demais / limite | Só `stale` e `already_resolved` definidos | Enumerar `code`: `stale`, `not_armed`, `too_large`, `rate_limited`, `session_ended`, `already_resolved`, `step_up_required`, `step_up_invalid`, `policy_off`, `internal`. Cada código tem texto próprio em `textos.md` (AJ-24: `global.err_rate_limited`, `arm.err_step_up_invalid`, `global.err_internal`). | M |
 | E15 | "A conexão caiu durante o envio. Conferindo…" | `cmd.status` existe | ok, e o cliente precisa guardar o `cmd.id` pendente **em memória** até a reconexão | — |
 | E16 | Aparelhos e segurança: "Aparelhos com acesso a LUCAS-PC" (este + outros, visto há…) | Não há comando de leitura de aparelhos | `devices.list → [{name, last_seen_at, connected, is_self}]`, sem chaves nem ids de outros. Só leitura: revogar outro só no PC (pergunta Q6). | D |
 | E17 | Atividade recente deste celular | Não há leitura de audit | `audit.list{limit ≤ 20}`, **filtrado pelo agente para o `device_id` autenticado**, só com metadados (ação, sessão, hora, contagem de caracteres). | D |
@@ -45,10 +45,11 @@ Legenda de prioridade:
 | E20 | Tela "Acesso remoto cortado em LUCAS-PC" (kill switch) | Não existe | Novo código de fechamento **4410 `cut`**, e a ponte responde "agente recusando" enquanto o corte durar. Diferente de 4403: o aparelho **não** foi revogado e volta sozinho quando o PC reativar. | M |
 | E21 | "Atualize a Pipa: o PC usa uma versão mais nova" | `hello{protocols:[1]}` sem falha amigável | Se não houver versão comum: close **4426** com `{"min_client":"x.y"}`. | M |
 | E22 | Encerrar terminal com biometria | `session.terminate` com step-up | ok, usar E6 | — |
-| E23 | Configurações: "ponte alcançável · 182 ms" | — | Medido pelo cliente (RTT do ping WS). Sem exigência. | — |
-| E24 | Notificação opaca: "Algo pede sua atenção em LUCAS-PC" | Push citado na visão | Push FCM **só** com `{agent_id, attention_id}`, prioridade alta, sem `notification` (data-only). O app monta o texto com o `agent_name` local (E1). Se o app não conhece o `agent_id`, usa `notif.attn_unknown`. | M |
+| E23 | Aparelhos e segurança: "LUCAS-PC responde em 182 ms" e o servidor "alcançável" / "sem resposta" (AJ-18, AJ-19) | — | O número é o RTT do Ping/Pong dentro do TLS (R3.11), celular ↔ PC; o servidor mostra só alcançável / sem resposta, sem ms. Sem exigência. | — |
+| E24 | Notificação opaca: "Algo pede sua atenção em LUCAS-PC" | Push citado na visão | Push FCM **só** com `{agent_id, attention_id}`, prioridade alta, sem `notification` (data-only). O app monta o texto com o `agent_name` local (E1). Se o app não conhece o `agent_id`, usa `notif.attn_unknown`. Os avisos de outros programas (EX1) usam o mesmo push opaco, com texto e canal próprios (`notif.notice`, `notif.notice_unknown`, AJ-16): o push precisa distinguir pedido de aviso sem levar conteúdo. | M |
 | E25 | "Escrita liberada" visível em **outro** celular do mesmo PC | Evento de grant é por aparelho | `grant.armed` vai para todos os aparelhos conectados, com `device_name`, para eles saberem que outro está no controle. | D |
 | E26 | Estado "iniciando / perdido" | `starting`, `lost` existem | ok | — |
+| E27 | Seção Avisos (origem, título, texto curto, hora), Dispensar, contagem na lista de computadores, Silenciar avisos de uma origem e a lista "Avisos silenciados" com Reativar (AJ-07, AJ-08; EX1) | Não há avisos no TRCP/1 | Aviso como tipo próprio no Event Log, sem sessão de terminal: `notice{id, source, title, text, created_at}`, com conteúdo mínimo (P3 + P6); `notice.dismiss{id \| "*"}`; `notice.mute{source}`, `notice.unmute{source}` e `notice.muted.list`, guardados pelo agente **por celular**: com a origem silenciada, o agente deixa de mandar push dela para aquele celular. | M |
 
 ## 2. Pareamento (código de 12 dígitos)
 
@@ -58,7 +59,7 @@ Legenda de prioridade:
 | P2 | PC: modal "Permitir 'Pixel 8'?" | Nome do aparelho no pareamento | O celular envia `device_name` (editável na tela, padrão = modelo) **dentro** do canal SPAKE2 já cifrado. | M |
 | P3 | Erros distintos: expirado, errado, recusado, sem confirmação a tempo, ponte fora | Estados do rendezvous | A ponte/agente respondem `pair.error{code: expired\|wrong_code\|rejected\|confirm_timeout\|busy}`. `wrong_code` **invalida** o código (uso único, anti-força-bruta). Confirmação no PC expira em 60 s. | M |
 | P4 | Webview: "Pixel 8 leu o código" | O agente sabe; falta chegar à extensão | Ver IPC I3 | M |
-| P5 | QR | Conteúdo | `pipa://pair?c=482191372055&b=ponte.gariolilabs.com&v=1` (o celular valida `b` contra a lista de pontes conhecidas; se for outra, pergunta). | M |
+| P5 | QR e campo Servidor (AJ-02, AJ-03) | Conteúdo do QR; o código digitado não carrega o servidor | `pipa://pair?c=482191372055&b=ponte.seudominio.com&v=1`. O celular mostra `b` no campo Servidor. No primeiro computador, só mostra; quando o app já tem computadores e `b` é diferente de todos eles, pergunta antes (`add.server_new_*`). Ao digitar, a pessoa informa o servidor e o código: não há servidor padrão. | M |
 
 ## 3. IPC extensão VS Code ↔ agente `trcd` (local)
 
@@ -75,12 +76,14 @@ A extensão é uma view fina. Tudo que ela mostra vem do agente por IPC local
 | I6 | Árvore Pipa | `devices.list` (todos, com `last_seen_at` e `connected`), `device.revoke{device_id}`, `activity.recent{limit}` |
 | I7 | Kill switch | `remote.cut` / `remote.restore`. O corte fecha todas as conexões com 4410 e **persiste** no disco (pergunta Q5). |
 | I8 | Retirar escrita | `grant.disarm{session_id \| "*"}` |
-| I9 | Política | `policy.get/set{write_enabled, arm_max_min, audit_input}`, ligado às configurações `pipa.*` |
+| I9 | Política | `policy.get/set{write_enabled, arm_max_min}`, ligado às configurações `pipa.*` (sem `audit_input`: AJ-31) |
 | I10 | Terminal remoto | Já coberto pela arquitetura: a extensão é a view do PTY do agente (`Pseudoterminal`) |
+| I11 | Configurar servidor (AJ-25, AJ-26) | `bridge.set{address}` e `bridge.enroll{key}`: o agente registra o PC no servidor com a chave de inscrição. A chave fica no cofre do agente (DPAPI) ou no `SecretStorage` da extensão, nunca em `settings.json`. Formato, emissão e revogação: P4. |
+| I12 | Renomear o PC (AJ-30) | `agent.rename{name}`; o novo nome chega aos celulares como `agent_name` (E1) |
 
 ## 4. Não exigir (decisões de privacidade que o protocolo deve manter)
 
 - Nenhum campo de tela ou de contexto vai no push.
-- `audit.list` nunca devolve o texto digitado, nem quando `audit_input` está
-  ligado no PC. Esse texto fica só no PC.
+- `audit.list` nunca devolve o texto digitado. O texto digitado não é
+  registrado nem no PC (AJ-31, `privacy.md` §14 DP3).
 - O celular não recebe `pubkey` nem `device_id` de outros aparelhos.

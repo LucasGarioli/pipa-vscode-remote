@@ -88,7 +88,9 @@ heurística H1 de Nielsen, visibilidade do estado do sistema.
 3. `$(shield)` Mostrar aparelhos: foca a árvore.
 4. `$(circle-slash)` Cortar acesso remoto, com `detail` = `vsc.cmd_cut_detail`.
    Quando está cortado, o item vira `$(debug-restart)` Reativar acesso remoto.
-5. `$(gear)` Abrir configurações da Pipa.
+5. `$(server)` Configurar servidor (`vsc.cmd_set_bridge`, AJ-26): pede o
+   endereço e depois a chave de inscrição.
+6. `$(gear)` Abrir configurações da Pipa.
 
 **Kill switch sem confirmação, com desfazer.** Cortar é seguro e reversível:
 ninguém perde trabalho. A notificação que aparece oferece o botão
@@ -107,6 +109,15 @@ ninguém perde trabalho. A notificação que aparece oferece o botão
 - `retainContextWhenHidden` desligado: o código é regenerado se o painel
   voltar.
 
+**Antes de abrir** (AJ-25, opção a): na primeira vez em que a pessoa roda
+Conectar celular, sem `pipa.bridge` configurado, a extensão pede o servidor
+numa `window.showInputBox` (`vsc.bridge_prompt`; validação
+`vsc.bridge_invalid`; link `vsc.bridge_howto`) e, em seguida, a chave de
+inscrição (AJ-26, `vsc.enroll_prompt`, `vsc.enroll_help`,
+`vsc.enroll_invalid`). Só então abre o painel. A ponte só importa para
+parear: perguntar na instalação pesaria para quem ainda só usa o terminal
+local. No uso de Sr. Garioli, os dois já estão configurados.
+
 **Por que webview:** a UI nativa não mostra QR nem um código de 12 dígitos
 grande. É a única webview do produto.
 
@@ -115,12 +126,16 @@ grande. É a única webview do produto.
 - três passos numerados;
 - o código `4821 · 9137 2055` em fonte do editor, 30 px, com dígitos
   tabulares;
+- junto do código, na mesma fonte, o **servidor** (`vsc.pair_server_label`)
+  com o botão **Copiar** (`vsc.pair_copy`, `vsc.pair_copied`): quem digita
+  no celular precisa dos dois (AJ-27, `vsc.pair_step2`);
 - o QR (150 px, fundo branco fixo, porque QR precisa de contraste
   claro/escuro verdadeiro);
 - "Vale por 4:59 · uso único";
 - botões Ocultar código e Gerar novo código;
 - a faixa de estado;
-- a ponte usada.
+- sem código na tela (expirou, errado, recusado), o rodapé mostra o
+  servidor (`vsc.pair_bridge`).
 
 **Estados:**
 
@@ -132,7 +147,7 @@ grande. É a única webview do produto.
 | Expirou | `vsc.pair_expired` | o código some; botão Gerar novo |
 | Código errado | `vsc.pair_wrong` | o código é invalidado; botão Gerar novo |
 | Recusado | `vsc.pair_rejected` | botão Gerar novo |
-| Ponte fora | `vsc.pair_bridge_down` | botão Gerar novo; link para a configuração |
+| Servidor fora | `vsc.pair_bridge_down` | botão Gerar novo; link para a configuração |
 
 **Ocultar código:** troca os dígitos por `•••• · •••• ••••` e esconde o QR.
 Serve para quem compartilha a tela numa chamada.
@@ -165,7 +180,7 @@ alguém que fotografou o código.
 
 - o **código de confirmação** `482 913`, para comparar com o celular;
 - o que o aparelho poderá fazer: ver em só leitura, escrever só com
-  biometria.
+  biometria ou PIN.
 
 **Ações:**
 
@@ -218,8 +233,17 @@ o resto sem modal.
 **Perfil padrão:** a visão pede que novos terminais nasçam no perfil remoto.
 O caminho estável é a configuração do usuário
 `terminal.integrated.defaultProfile.windows`. A extensão **pergunta uma vez**
-(notificação com botão "Usar como padrão") e só grava com consentimento. Ver
-os itens não verificados.
+e só grava com consentimento (AJ-28):
+
+- notificação `vsc.default_profile_offer`, com os botões
+  `vsc.default_profile_accept` ("Usar como padrão") e
+  `vsc.default_profile_decline` ("Não");
+- depois de um não, a extensão não pergunta de novo e aponta o comando
+  **Usar o Terminal remoto como padrão** (`pipa.useAsDefault`, §9, AJ-29);
+  o celular mostra o vazio próprio (`sessions.empty_body_not_default`,
+  `android.md` §6).
+
+Ver os itens não verificados.
 
 ## 7. Painel "Pipa" (árvore)
 
@@ -237,13 +261,15 @@ os itens não verificados.
     (`$(circle-slash)` / `$(debug-restart)`);
   - `view/item/context` com `group: 'inline'`: Revogar (`$(trash)`) quando
     `viewItem == device`, e Retirar escrita (`$(lock)`) quando
-    `viewItem == session.armed`.
+    `viewItem == session.armed`;
+  - `view/item/context` no nó `viewItem == thisPc`: Renomear este
+    computador (`pipa.renamePc`, AJ-30).
 - `contributes.viewsWelcome` para `pipa.devices` quando não há aparelhos:
   `vsc.tree_welcome_text` + `[Conectar celular](command:pipa.pair)`.
 
 **Estrutura:**
 
-- Este computador · LUCAS-PC — `agente ligado` | `acesso cortado`
+- Este computador · LUCAS-PC — `agente ligado` | `acesso cortado` [renomear]
 - Aparelhos
   - Pixel 8 — `conectado agora` [revogar]
   - Galaxy Tab S9 — `visto há 3 dias` [revogar]
@@ -282,6 +308,12 @@ com "Cancelar" automático.
 - `pipa.disarm`: Retirar escrita;
 - `pipa.revoke`;
 - `pipa.startAgent`;
+- `pipa.setBridge`: Configurar servidor (`vsc.cmd_set_bridge`, AJ-26);
+- `pipa.useAsDefault`: Usar o Terminal remoto como padrão
+  (`vsc.cmd_use_as_default`, AJ-29);
+- `pipa.renamePc`: Renomear este computador (`vsc.cmd_rename_pc`, AJ-30),
+  com `window.showInputBox` (`vsc.rename_prompt`, `vsc.rename_help`); o
+  agente aplica `agent.rename`;
 - `pipa.openSettings`.
 
 `pipa.restore` e `pipa.disarm` só aparecem quando fazem sentido
@@ -294,21 +326,25 @@ com "Cancelar" automático.
 
 | Chave | Tipo, padrão | Observação |
 |---|---|---|
-| `pipa.bridge` | string, `ponte.gariolilabs.com` | escopo `machine`, para o workspace não mudar a ponte |
+| `pipa.bridge` | string, vazio | escopo `machine`, para o workspace não mudar o servidor. Não há servidor público: fica vazio até a pessoa informar (AJ-25, §4); no uso de Sr. Garioli, `ponte.gariolilabs.com` fica nas configurações de usuário dele |
 | `pipa.write.enabled` | boolean, `true` | escopo `machine`; desligado = celular só lê (`arm.policy_off`) |
 | `pipa.write.maxMinutes` | number, `15`, enum 1/5/15 | teto das opções do celular |
 | `pipa.notify.onArm` | boolean, `true` | notificação da §6 |
-| `pipa.audit.input` | boolean, `false` | registra o texto enviado, **só no PC** |
 
 - **Escopo `machine`.** Uma pasta clonada não pode trazer um
   `.vscode/settings.json` que ligue a escrita ou troque a ponte.
+- **Chave de inscrição** (AJ-26): nunca em `settings.json`; fica no
+  `SecretStorage` da extensão ou no cofre do agente (DPAPI). O formato, a
+  emissão e a revogação são de P4 (Fable); a tela segue o que P4 fechar.
+- **Sem `pipa.audit.input`** (AJ-31; `privacy.md` §14 DP3, opção a): o texto
+  digitado nunca é registrado, e `devices.audit_note` vale sem exceção.
 
 ## 11. Estados globais no VS Code
 
 | Situação | Onde aparece |
 |---|---|
 | Agente parado | barra de status em warning "Pipa parada"; no painel, a lista de terminais mostra o texto e o botão Iniciar agente; terminais remotos não abrem |
-| Ponte fora | faixa no painel de pareamento; tooltip da barra de status; nada bloqueia o uso local |
+| Servidor fora | faixa no painel de pareamento; tooltip da barra de status; nada bloqueia o uso local |
 | Acesso cortado | barra de status `$(circle-slash)`; nó raiz da árvore; notificação com Reativar |
 | Celular com escrita liberada | aba renomeada, barra warning, badge na árvore, notificação |
 

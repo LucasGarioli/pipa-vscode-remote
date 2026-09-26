@@ -3,12 +3,14 @@
 > **Aprovação (2026-09-26):** Sr. Garioli aceitou as 13 recomendações
 > que pediam decisão (AJ-03, 04, 07, 08, 10, 11, 15, 16, 18, 19, 25, 33,
 > 34), junto com as 21 correções óbvias. AJ-22 e AJ-32 seguem para P5.
-> Próximo passo: aplicar os ajustes às telas, aos textos e ao protótipo.
+> Aplicados em 2026-09-26 (ver o Status abaixo).
 
-Status: **proposta para aprovação de Sr. Garioli.** Nada aqui foi aplicado
-às interfaces aprovadas (`android.md`, `vscode.md`, `textos.md`,
-`fluxos.md`, `visao.md`); este arquivo só junta, numa lista única, os
-ajustes de tela e de texto que as entregas de planejamento pediram.
+Status: **aplicado em 2026-09-26, exceto AJ-22/AJ-32 (P5).** Cada ajuste
+aplicado traz a linha **APLICADO** com o arquivo e a seção onde entrou
+(`android.md`, `vscode.md`, `textos.md` via catálogo, `fluxos.md`,
+`exigencias-para-o-protocolo.md`, `visao.md` e o protótipo). Este arquivo
+junta, numa lista única, os ajustes de tela e de texto que as entregas de
+planejamento pediram.
 
 ## Resumo
 
@@ -53,6 +55,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-01 — Passos da Boas-vindas sem o servidor**
 
+> **APLICADO (2026-09-26):** `prototipo/textos.catalogo.json` (`welcome.body`, `welcome.step1`, `welcome.step3`), regenerado em `textos.md`; `android.md` §1 só cita as chaves.
+
 - **Tela:** `android.md` §1; `textos.md` `welcome.step1`,
   `welcome.step3`.
 - **Problema:** os três passos supõem uma ponte já configurada; sem ponte
@@ -69,6 +73,8 @@ privada (`docs/adr/0004-…`).
 ### §2 Adicionar computador
 
 **AJ-02 — Campo "Servidor" ao adicionar computador**
+
+> **APLICADO (2026-09-26):** `android.md` §2 (campo Servidor, pré-preenchimento, botão Conectar); `prototipo/textos.catalogo.json` (`add.server_*`); protótipo (`#add_code_*`, `#add_qr`).
 
 - **Tela:** `android.md` §2 (bloco "Ponte"); `textos.md` `add.bridge_*`.
 - **Problema:** o código digitado de 12 dígitos não carrega o endereço da
@@ -98,6 +104,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-03 — QR que traz um servidor desconhecido**
 
+> **APLICADO (2026-09-26):** `android.md` §2 (QR com outro servidor); `prototipo/textos.catalogo.json` (`add.server_new_*`); `exigencias-para-o-protocolo.md` P5; `fluxos.md` X20; protótipo (`#add_qr_new_server`).
+
 - **Tela:** `android.md` §2 ("se o QR trouxer uma ponte desconhecida, o
   app pergunta antes"); `exigencias-para-o-protocolo.md` P5.
 - **Problema:** sem ponte padrão, no primeiro pareamento **todo**
@@ -124,6 +132,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-04 — Leitor de QR: embutido ou do Google Play services**
 
+> **APLICADO (2026-09-26):** `android.md` §0 (sem `CAMERA`, [INFERÊNCIA — verificar em M7]) e §2; `prototipo/textos.catalogo.json` (`add.qr_open`, `add.qr_unavailable`); `fluxos.md` X17; protótipo (`#add_qr_unavailable`).
+
 - **Tela:** `android.md` §0 (tabela de permissões, `CAMERA`) e §2 (aba
   "Ler QR", `add.qr_camera_*`).
 - **Problema:** um leitor embutido pesa alguns MB por arquitetura, contra
@@ -147,6 +157,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-05 — "2 minutos" no erro de confirmação**
 
+> **APLICADO (2026-09-26):** `prototipo/textos.catalogo.json` (`pair.err_timeout_body`: 60 segundos).
+
 - **Tela:** `android.md` §4; `textos.md` `pair.err_timeout_body`.
 - **Problema:** o texto diz "em 2 minutos"; a própria tabela de §4, o
   fluxo X4, ADR-0004 e a spec usam 60 s.
@@ -158,6 +170,8 @@ privada (`docs/adr/0004-…`).
 ### §6 Terminais de um computador
 
 **AJ-06 — Estado vazio depois de um "não" ao perfil padrão**
+
+> **APLICADO (2026-09-26):** `android.md` §6; `prototipo/textos.catalogo.json` (`sessions.empty_body_not_default`); `vscode.md` §6; protótipo (`#sessions_empty_not_default`).
 
 - **Tela:** `android.md` §6 (Estados, vazio); `textos.md`
   `sessions.empty_body`.
@@ -174,6 +188,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-07 — Onde o aviso de outro programa (EX1) aparece no app**
+
+> **APLICADO (2026-09-26):** `android.md` §5 e §6 (seção Avisos); `prototipo/textos.catalogo.json` (`notices.*`, `pcs.notices_*`); `exigencias-para-o-protocolo.md` E3 e E27; protótipo (`#notices`).
 
 - **Tela:** `android.md` §5 e §6.
 - **Problema:** nenhuma tela mostra os avisos da entrada local (primeiro
@@ -199,6 +215,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Sim.
 
 **AJ-08 — Como silenciar uma origem de avisos**
+
+> **APLICADO (2026-09-26):** `android.md` §6 (menu ⋮) e §12 (Avisos silenciados); `prototipo/textos.catalogo.json` (`notices.mute`, `notices.muted_toast`, `devices.muted_*`); `exigencias-para-o-protocolo.md` E27; protótipo (`#notices_menu`, `#devices_muted`).
 
 - **Tela:** `android.md` §6 (cartão do aviso) e §12.
 - **Problema:** EX1 pede que a pessoa possa silenciar uma origem; nenhuma
@@ -227,6 +245,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-09 — Tamanho quando nenhum terminal do VS Code está ligado**
 
+> **APLICADO (2026-09-26):** `android.md` §7; `prototipo/textos.catalogo.json` (`session.size_agent`).
+
 - **Tela:** `android.md` §7 (barra superior); `textos.md`
   `session.size_desktop`.
 - **Problema:** com `size_src: "agent"`, o sufixo "(VS Code)" é falso.
@@ -235,6 +255,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-10 — Colar texto com várias linhas no campo de envio**
+
+> **APLICADO (2026-09-26):** `android.md` §7 (erros de envio); `prototipo/textos.catalogo.json` (`session.err_multiline`); `fluxos.md` X19; protótipo (`#session_multiline`).
 
 - **Tela:** `android.md` §7 (campo de envio, estados de envio).
 - **Problema:** a spec só aceita uma linha por envio (D-22: um envio nunca
@@ -251,6 +273,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Sim.
 
 **AJ-11 — O que a tela mostra ao perder a rede**
+
+> **APLICADO (2026-09-26):** `android.md` §0 (Offline ou reconectando) e §7; `fluxos.md` X7.
 
 - **Tela:** `android.md` §0 ("Offline: … conteúdo antigo apagado") e §7
   ("reconectando: a tela congela esmaecida"); `fluxos.md` X7 ("a tela
@@ -276,6 +300,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-12 — Outro aparelho no controle (`busy`)**
 
+> **APLICADO (2026-09-26):** `android.md` §8; `prototipo/textos.catalogo.json` (`arm.busy`).
+
 - **Tela:** `android.md` §8 (Estados); `textos.md` (chave nova).
 - **Problema:** `busy` não tem texto aprovado.
 - **Proposta:** `arm.busy` = "{device} está no controle deste terminal
@@ -287,6 +313,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-13 — "O Claude continuou" afirma demais**
 
+> **APLICADO (2026-09-26):** `android.md` §10; `prototipo/textos.catalogo.json` (`attn.done_allowed`); `fluxos.md` F4.
+
 - **Tela:** `android.md` §10 (estados finais); `textos.md`
   `attn.done_allowed`.
 - **Problema:** o `ok` garante que a decisão foi entregue ao adaptador,
@@ -297,6 +325,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-14 — Pedidos sem opções: o que vai no rodapé**
+
+> **APLICADO (2026-09-26):** `android.md` §10 (pedidos sem opções); `prototipo/textos.catalogo.json` (`attn.answer_in_terminal`); `fluxos.md` F4; protótipo (`#attn_question`).
 
 - **Tela:** `android.md` §10 (Ações, fixas no rodapé).
 - **Problema:** para `question`, `idle`, `finished` e `error` não há
@@ -313,6 +343,8 @@ privada (`docs/adr/0004-…`).
 ### §11 Notificações
 
 **AJ-15 — Nome do PC na tela de bloqueio**
+
+> **APLICADO (2026-09-26):** `android.md` §0 e §11 (`VISIBILITY_PRIVATE` + versão pública); `fluxos.md` F4; protótipo (tela de bloqueio).
 
 - **Tela:** `android.md` §11 (canal `pipa_attention`,
   `VISIBILITY_PUBLIC`).
@@ -331,6 +363,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Sim.
 
 **AJ-16 — Notificação dos avisos de outros programas (EX1)**
+
+> **APLICADO (2026-09-26):** `android.md` §11 (canal `pipa_notices`); `prototipo/textos.catalogo.json` (`notif.notice`, `notif.notice_unknown`, `notif.channel_notices*`); `exigencias-para-o-protocolo.md` E24.
 
 - **Tela:** `android.md` §11.
 - **Problema:** o único texto de notificação é `notif.attn` ("Algo pede
@@ -356,6 +390,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-17 — Textos de audit que faltam**
 
+> **APLICADO (2026-09-26):** `android.md` §12; `prototipo/textos.catalogo.json` (`audit.terminated`, `audit.forgotten`).
+
 - **Tela:** `android.md` §12 (Atividade recente); `vscode.md` §7
   (Atividade recente); `textos.md` `audit.*`.
 - **Problema:** faltam os textos das entradas `terminated` e `forgotten`.
@@ -368,6 +404,8 @@ privada (`docs/adr/0004-…`).
 ### §13 Configurações
 
 **AJ-18 — Onde o servidor fica no app**
+
+> **APLICADO (2026-09-26):** `android.md` §12 (servidor no bloco do PC) e §13 (sem item Ponte); `prototipo/textos.catalogo.json` (saem `settings.bridge*`, entram `devices.server*`); protótipo (`#devices`, `#settings`).
 
 - **Tela:** `android.md` §13 (item "Ponte") e §12; `textos.md`
   `settings.bridge*`.
@@ -394,6 +432,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-19 — Que número de latência mostrar**
 
+> **APLICADO (2026-09-26):** `android.md` §12; `prototipo/textos.catalogo.json` (`devices.pc_rtt`, `devices.server_ok`, `devices.server_err`); `exigencias-para-o-protocolo.md` E23.
+
 - **Tela:** `android.md` §13 (ou §12, se AJ-18 for aprovado);
   `textos.md` `settings.bridge_ok`.
 - **Problema:** "alcançável · {ms} ms" fala da **ponte**, mas o Ping/Pong
@@ -414,6 +454,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-20 — Autenticação recusada (4401) e parada depois de três falhas**
 
+> **APLICADO (2026-09-26):** `android.md` §14; `prototipo/textos.catalogo.json` (`global.auth_failed_*`); `fluxos.md` X18 e diagrama; protótipo (`#auth_failed`).
+
 - **Tela:** `android.md` §14 (linha nova).
 - **Problema:** o fechamento 4401 e a parada das tentativas depois de três
   falhas seguidas (R13.5) não têm tela nem texto.
@@ -429,6 +471,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-21 — Celular mais novo que o PC (4426)**
 
+> **APLICADO (2026-09-26):** `android.md` §14; `prototipo/textos.catalogo.json` (`global.outdated_pc`); `fluxos.md` X15; protótipo (`#outdated_pc`).
+
 - **Tela:** `android.md` §14 (Versões incompatíveis).
 - **Problema:** `global.outdated` só cobre o PC mais novo.
 - **Proposta:** `global.outdated_pc` = "Atualize a extensão Pipa em {pc}:
@@ -437,6 +481,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-22 — Revogado, se P5 recusar no próprio TLS**
+
+> **Não aplicado:** fica para P5 (segurança, Fable).
 
 - **Tela:** `android.md` §14 (Aparelho revogado, `global.revoked_*`).
 - **Problema:** a tela de revogado depende de o agente completar o TLS e
@@ -452,6 +498,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-23 — Reconectar na hora quando chega rede nova**
 
+> **APLICADO (2026-09-26):** `android.md` §14 (Reconectando).
+
 - **Tela:** `android.md` §14 (Reconectando).
 - **Problema:** a tela fixa a espera em "1 a 30 s"; NFR-25 pede reconectar
   na hora quando o Android avisa que há rede nova.
@@ -462,6 +510,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-24 — Códigos de erro sem texto**
+
+> **APLICADO (2026-09-26):** `android.md` §7, §8 e §14; `prototipo/textos.catalogo.json` (`global.err_rate_limited`, `global.err_internal`, `arm.err_step_up_invalid`); `exigencias-para-o-protocolo.md` E14.
 
 - **Tela:** `android.md` §7, §8 e §14; `textos.md` (chaves novas).
 - **Problema:** `rate_limited`, `step_up_invalid` e `internal` não têm
@@ -481,6 +531,8 @@ privada (`docs/adr/0004-…`).
 ## B. Extensão VS Code (`vscode.md`)
 
 **AJ-25 — `pipa.bridge` sem padrão e pedido do endereço na primeira vez**
+
+> **APLICADO (2026-09-26):** `vscode.md` §4 e §10 (`pipa.bridge` vazio); `prototipo/textos.catalogo.json` (`vsc.set_bridge`, `vsc.bridge_*`); `exigencias-para-o-protocolo.md` I11; protótipo (sem `BRIDGE` fixo, `#vs_bridge_prompt`).
 
 - **Tela:** `vscode.md` §10 (`pipa.bridge`, padrão
   `ponte.gariolilabs.com`) e §4; `textos.md` `vsc.set_bridge`.
@@ -510,6 +562,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-26 — Chave de inscrição da ponte**
 
+> **APLICADO (2026-09-26):** `vscode.md` §3, §4, §9 e §10; `prototipo/textos.catalogo.json` (`vsc.cmd_set_bridge`, `vsc.enroll_*`); `exigencias-para-o-protocolo.md` I11; `fluxos.md` F1.
+
 - **Tela:** `vscode.md` §3 (menu rápido), §9 (comandos), §10.
 - **Problema:** para registrar o PC numa ponte é preciso a chave de
   inscrição emitida por quem opera a ponte; nenhuma tela a pede.
@@ -529,6 +583,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-27 — Painel "Conectar celular" deixa claro o servidor**
 
+> **APLICADO (2026-09-26):** `vscode.md` §4; `prototipo/textos.catalogo.json` (`vsc.pair_step2`, `vsc.pair_server_label`, `vsc.pair_copy`, `vsc.pair_copied`, `vsc.pair_bridge`); protótipo (`#vs_pair`).
+
 - **Tela:** `vscode.md` §4 (conteúdo); `textos.md` `vsc.pair_step2`,
   `vsc.pair_bridge`.
 - **Problema:** quem digita o código no celular precisa também do
@@ -541,6 +597,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-28 — Notificação que oferece o perfil padrão**
+
+> **APLICADO (2026-09-26):** `vscode.md` §6; `prototipo/textos.catalogo.json` (`vsc.default_profile_*`).
 
 - **Tela:** `vscode.md` §6; `textos.md` (chaves novas).
 - **Problema:** `vscode.md` §6 descreve a notificação, mas não há textos;
@@ -559,6 +617,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-29 — Comando "Usar o Terminal remoto como padrão"**
 
+> **APLICADO (2026-09-26):** `vscode.md` §6 e §9; `prototipo/textos.catalogo.json` (`vsc.cmd_use_as_default`).
+
 - **Tela:** `vscode.md` §9; `textos.md` (chave nova).
 - **Problema:** a lista de comandos não tem o comando decidido.
 - **Proposta:** comando `pipa.useAsDefault`, `vsc.cmd_use_as_default` =
@@ -567,6 +627,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-30 — Renomear o PC**
+
+> **APLICADO (2026-09-26):** `vscode.md` §7 e §9; `prototipo/textos.catalogo.json` (`vsc.cmd_rename_pc`, `vsc.rename_*`); `exigencias-para-o-protocolo.md` I12.
 
 - **Tela:** `vscode.md` §7 (nó "Este computador") e §9.
 - **Problema:** Q11 decidiu "hostname, editável" e o protocolo tem
@@ -582,6 +644,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-31 — Tirar `pipa.audit.input` do MVP**
 
+> **APLICADO (2026-09-26):** `vscode.md` §10; `prototipo/textos.catalogo.json` (sai `vsc.set_audit_input`); `exigencias-para-o-protocolo.md` I9 e §4.
+
 - **Tela:** `vscode.md` §10; `textos.md` `vsc.set_audit_input`.
 - **Problema:** a opção grava o texto digitado no PC, contra ADR-0012 e
   contra `devices.audit_note` ("O texto digitado não é registrado").
@@ -593,6 +657,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Não.
 
 **AJ-32 — Autorizar um programa a mandar avisos (EX1)**
+
+> **Não aplicado:** fica para P5 (segurança, Fable).
 
 - **Tela:** `vscode.md` §7 (árvore) e §11; `textos.md` (chaves novas).
 - **Problema:** se P5 decidir que o agente guarda uma lista de origens
@@ -615,6 +681,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-33 — "Biometria" ou "biometria ou PIN"**
 
+> **APLICADO (2026-09-26):** `prototipo/textos.catalogo.json` (`arm.cta`, `terminate.cta`, `attn.allow_bio`, `attn.*_note`, `devices.app_lock*`, `welcome.security_*`); `android.md` §0, §1, §8–§10 e §12; `fluxos.md` F3 e F4; `visao.md`; `README.md` decisão 1.
+
 - **Tela:** `textos.md` `welcome.body`, `welcome.security_4`,
   `pair.success_body`, `vsc.allow_detail`, `vsc.set_write`; botão
   "Liberar com biometria" (`android.md` §8) e "Permitir com biometria"
@@ -632,6 +700,8 @@ privada (`docs/adr/0004-…`).
 - **Precisa de decisão?** Sim.
 
 **AJ-34 — "Ponte" ou "Servidor" nas telas**
+
+> **APLICADO (2026-09-26):** `prototipo/textos.catalogo.json` ("servidor" em todas as telas); `gen_textos.py` (regra "Servidor, não ponte"); `README.md` glossário; `android.md`, `vscode.md`, `fluxos.md`.
 
 - **Tela:** `textos.md` (todas as chaves com "ponte": `pair.connecting`,
   `pair.err_bridge_*`, `global.bridge_down`, `vsc.pair_bridge*`,
@@ -656,6 +726,8 @@ privada (`docs/adr/0004-…`).
 
 **AJ-35 — F1 e X6 com o servidor e a chave**
 
+> **APLICADO (2026-09-26):** `fluxos.md` F1 (passos 1, 3, 4 e diagrama com "Servidor (ponte)") e X6.
+
 - **Tela:** `fluxos.md` F1 (passos 1, 3 e 4, e o diagrama) e X6.
 - **Problema:** F1 supõe a ponte padrão; não há o passo de configurar o
   servidor nem de digitar o servidor no celular.
@@ -675,6 +747,8 @@ privada (`docs/adr/0004-…`).
 ## E. Visão (`visao.md`)
 
 **AJ-36 — "O que faz" e "O que não faz"**
+
+> **APLICADO (2026-09-26):** `visao.md` ("O que faz", "O que não faz", biometria ou PIN).
 
 - **Tela:** `visao.md` "O que faz" e "O que não faz (no MVP)".
 - **Problema:** "Mostra no celular todos os terminais abertos no VS Code"

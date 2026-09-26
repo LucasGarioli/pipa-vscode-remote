@@ -15,12 +15,12 @@ Este conjunto desenha as telas da extensão VS Code e do app Android da
 
 | Arquivo | O que tem |
 |---|---|
-| `fluxos.md` | Fluxos numerados F1–F7 (instalar → parear → acompanhar → digitar → aprovar → revogar/cortar → remover) e 17 caminhos de falha, com diagramas mermaid |
+| `fluxos.md` | Fluxos numerados F1–F7 (instalar → parear → acompanhar → digitar → aprovar → revogar/cortar → remover) e 20 caminhos de falha, com diagramas mermaid |
 | `vscode.md` | Cada superfície da extensão, com a API estável conferida no `vscode.d.ts` (com linha), conteúdo, estados e textos |
 | `android.md` | Cada tela do app: propósito, campos do protocolo, ações e permissões, estados, textos, acessibilidade |
 | `identidade-visual.md` | Marca em cada tamanho, tokens claro/escuro com contraste medido, tipografia, espaço, ícones, mapeamento Material 3 |
-| `textos.md` | Catálogo completo de strings (418 chaves, PT-BR e EN), gerado do JSON |
-| `exigencias-para-o-protocolo.md` | O que falta no TRCP/1 para as telas funcionarem (E1–E26, P1–P5, IPC I1–I10) |
+| `textos.md` | Catálogo completo de strings (478 chaves, PT-BR e EN), gerado do JSON |
+| `exigencias-para-o-protocolo.md` | O que falta no TRCP/1 para as telas funcionarem (E1–E27, P1–P5, IPC I1–I12) |
 | `prototipo/index.html` | Protótipo navegável e descartável: celular + VS Code lado a lado, PT/EN, sistema/claro/escuro |
 | `prototipo/textos.catalogo.json` | Fonte única dos textos; o protótipo e o `textos.md` saem dela |
 
@@ -34,8 +34,10 @@ Este conjunto desenha as telas da extensão VS Code e do app Android da
   celular. "Liberar escrita" é o termo da tela; nos documentos, "arm".
 - **Pedido (de atenção):** `Attention`. Na tela: "Claude pede permissão",
   "pedido esperando sua resposta".
-- **Ponte:** o servidor de retransmissão (`trc-bridge`). Só vê bytes
-  cifrados.
+- **Servidor (ponte):** o servidor de retransmissão (`trc-bridge`). Só vê
+  bytes cifrados. Nas telas, sempre "servidor"; "ponte" e `trc-bridge` ficam
+  nos documentos técnicos (AJ-34). Não há servidor público: cada pessoa usa
+  o seu; o de Sr. Garioli é privado.
 - **Código:** os 12 dígitos do pareamento.
 - **Código de confirmação:** os 6 dígitos (SAS) mostrados nos dois lados.
 
@@ -43,7 +45,7 @@ Este conjunto desenha as telas da extensão VS Code e do app Android da
 
 Cada decisão cita a razão. As que mudam o produto estão em **Perguntas**.
 
-1. **Só leitura por padrão, escrita por terminal, com prazo e biometria**
+1. **Só leitura por padrão, escrita por terminal, com prazo e biometria ou PIN**
    (Nielsen H5, prevenção de erro):
    - o controle é por terminal, e o prazo é 1 / 5 / 15 min;
    - a faixa de modo fica sempre visível no topo do terminal;
@@ -56,7 +58,8 @@ Cada decisão cita a razão. As que mudam o produto estão em **Perguntas**.
    O botão primário é tinta/papel, não âmbar: se o âmbar estivesse em todo
    botão, o pedido pendente não saltaria aos olhos.
 3. **A proteção fica onde o erro custa caro:**
-   - biometria em liberar escrita, permitir destrutivo e encerrar terminal;
+   - biometria ou PIN em liberar escrita, permitir destrutivo e encerrar
+     terminal;
    - modal no PC só para aceitar um aparelho e para revogar;
    - o resto é rápido e reversível;
    - o kill switch não tem confirmação e oferece **Reativar** (desfazer é
@@ -108,7 +111,7 @@ Cada decisão cita a razão. As que mudam o produto estão em **Perguntas**.
      - Liberar escrita renomeia a aba no VS Code.
      - Cortar acesso derruba o celular.
      - Revogar mostra a tela de revogado.
-   - O seletor **Ir para** abre qualquer um dos 59 estados.
+   - O seletor **Ir para** abre qualquer um dos 70 estados.
    - Cada estado também abre por link: `index.html#attn_destructive`,
      `#vs_modal`, `#cut`…
    - Os botões no topo trocam idioma (PT/EN) e tema (sistema/claro/escuro).
@@ -170,10 +173,16 @@ Motivos em `android.md` §15.
 - O protótipo é regenerado por `prototipo/ferramentas/build.py`, que lê
   `proto.src.html` e `textos.catalogo.json`. Os textos são regenerados por
   `gen_textos.py`.
+- **Revisão 2 das interfaces aprovada e aplicada em 2026-09-26.** Sr.
+  Garioli aprovou os ajustes de `ajustes-pendentes-2026-09-26.md`: as 21
+  correções óbvias e as 13 decisões na opção recomendada (AJ-03, 04, 07,
+  08, 10, 11, 15, 16, 18, 19, 25, 33 e 34). Os 34 entraram nas telas, no
+  catálogo (478 chaves), nos fluxos, nas exigências do protocolo, na visão e
+  no protótipo (70 estados). AJ-22 e AJ-32 ficam para P5 (segurança).
 
 ## Ajustes pendentes
 
-Os ajustes de tela e texto pedidos pelas entregas de planejamento, ainda
-não aplicados às interfaces aprovadas, estão numa lista única para
-aprovação de Sr. Garioli:
+Os ajustes de tela e texto pedidos pelas entregas de planejamento estão
+numa lista única, com o arquivo e a seção onde cada um entrou:
 [`ajustes-pendentes-2026-09-26.md`](ajustes-pendentes-2026-09-26.md).
+Aplicados em 2026-09-26, exceto AJ-22 e AJ-32, que ficam para P5.

@@ -14,14 +14,19 @@ Personagem: Sr. Garioli, com o PC "LUCAS-PC" (VS Code com terminais
 1. No PC, instala a extensão Pipa.
    - O agente `trcd` sobe.
    - A barra de status mostra `$(pipa) Pipa` (V§2).
-   - Uma notificação oferece "Usar Terminal remoto como padrão?"; só grava
-     com o sim (V§6).
+   - Uma notificação oferece "Usar o Terminal remoto (Pipa) como padrão…?";
+     só grava com o sim (V§6).
+   - A extensão pede o servidor e a chave de inscrição na primeira vez que a
+     pessoa roda Conectar celular (AJ-25, AJ-26; `#vs_bridge_prompt`). Não
+     há servidor público; no uso de Sr. Garioli, os dois já vêm
+     configurados.
 2. No celular, instala a Pipa e abre: **Boas-vindas** (A§1) → **Adicionar
    computador** (A§2).
 3. No VS Code: barra de status → **Conectar celular**. Abre o painel com o
-   código `4821 · 9137 2055`, o QR e "Vale por 5:00" (V§4, `#vs_pair`).
-4. No celular: lê o QR (ou digita os 12 dígitos) e confere o nome "Pixel 8"
-   → **Conectar** (`#add_code_full`).
+   código `4821 · 9137 2055`, o QR, o servidor com Copiar e "Vale por 5:00"
+   (V§4, `#vs_pair`).
+4. No celular: lê o QR (o servidor vem junto) ou digita o servidor e os 12
+   dígitos, e confere o nome "Pixel 8" → **Conectar** (`#add_code_full`).
 5. O celular mostra **Conectando** (`#pair_connecting`) e depois **Confira no
    PC** com `482 913` (`#pair_verify`).
 6. Ao mesmo tempo, o VS Code mostra o modal **"Permitir “Pixel 8” neste
@@ -36,14 +41,20 @@ sequenceDiagram
   actor U as Sr. Garioli
   participant V as VS Code (extensão)
   participant A as Agente trcd
-  participant B as Ponte
+  participant B as Servidor (ponte)
   participant P as Celular (Pipa)
   U->>V: Conectar celular
+  opt primeira vez (pipa.bridge vazio)
+    V-->>U: pede servidor e chave de inscrição
+    U->>V: servidor + chave
+    V->>A: servidor + chave
+    A->>B: registra o PC (chave de inscrição)
+  end
   V->>A: pair.start
   A->>B: registra rendezvous (4 primeiros dígitos)
   A-->>V: {code, expires_at, bridge}
   V-->>U: painel com código + QR + 5:00
-  U->>P: lê QR / digita código
+  U->>P: lê QR / digita servidor + código
   P->>B: rendezvous
   B-->>A: celular chegou
   P->>A: SPAKE2 (8 dígitos secretos) + device_name
@@ -72,7 +83,7 @@ sequenceDiagram
 
 1. No terminal "Claude Code", toca **Liberar escrita**. A folha (A§8)
    oferece 1 / 5 / 15 min, padrão 5 (`#arm`).
-2. **Liberar com biometria** → `BiometricPrompt` (`#arm_bio`) → a faixa fica
+2. **Liberar com biometria ou PIN** → `BiometricPrompt` (`#arm_bio`) → a faixa fica
    magenta, "Escrita liberada · 5:00" (`#session_armed`).
 3. **No PC, ao mesmo tempo:**
    - a aba vira "Claude Code · Pixel 8 no controle";
@@ -88,7 +99,7 @@ sequenceDiagram
 stateDiagram-v2
   [*] --> SoLeitura
   SoLeitura --> Folha: Liberar escrita
-  Folha --> Biometria: Liberar com biometria
+  Folha --> Biometria: Liberar com biometria ou PIN
   Folha --> SoLeitura: Cancelar
   Biometria --> Liberada: ok (grant.arm)
   Biometria --> Folha: cancelou / falhou
@@ -104,27 +115,30 @@ stateDiagram-v2
 1. O Claude Code pede permissão para `npm run build`. O agente abre
    `attention` (fonte: adapter).
 2. O push chega: **"Algo pede sua atenção em LUCAS-PC"** (A§11, `#notif`).
-   Nada do comando aparece.
+   Nada do comando aparece; com o celular bloqueado, nem o nome do PC
+   ("Algo pede sua atenção num computador", AJ-15).
 3. Toque → app → `resume` → **Pedido** (A§10, `#attn`):
    - "Claude pede permissão";
    - caixa com `npm run build`;
    - "Claude Code · LUCAS-PC · ~/projetos/api · há 12 s".
 4. **Permitir:**
    - se a escrita estiver liberada, envia direto;
-   - senão, pede biometria (a nota avisa antes);
-   - aparece "Enviando resposta…" e depois "Permitido. O Claude continuou."
-     (`#attn_done`).
+   - senão, pede biometria ou PIN (a nota avisa antes);
+   - aparece "Enviando resposta…" e depois "Permitido. A resposta foi
+     entregue ao Claude." (`#attn_done`).
 5. **Recusar:** envia sem biometria → "Recusado. O Claude foi avisado."
 
 **Variações:**
 
 - **Destrutivo** (`rm -rf dist`, `#attn_destructive`): nota vermelha,
-  "Permitir com biometria" **sempre**, mesmo com escrita liberada.
+  "Permitir com biometria ou PIN" **sempre**, mesmo com escrita liberada.
 - **Detectado pela tela** (`#attn_heuristic`): aviso âmbar "Confira o
   terminal antes de responder".
 - **Já respondido no PC** (`#attn_stale`): sem botões, só o cartão
   "Já respondido no PC às 14:33" e Abrir terminal.
 - **Claude parou de esperar** (`#attn_expired`).
+- **Pergunta do Claude** (`#attn_question`): sem Permitir nem Recusar; Abrir
+  terminal e responder lá (AJ-14).
 
 ```mermaid
 flowchart TD
@@ -183,8 +197,8 @@ o PC → Remover LUCAS-PC (`#remove_pc`).
 | X3 | Recusado no PC | celular: `pair.err_rejected_*` | Conferir se é o PC certo |
 | X4 | Ninguém respondeu o modal em 60 s | celular: `pair.err_timeout_*` | Tentar de novo perto do PC |
 | X5 | Códigos de confirmação diferentes | a dica na tela manda recusar no PC e cancelar | Recusar; gerar novo código |
-| X6 | Ponte fora | faixa / cartão com o endereço da ponte | Tentar de novo; conferir a ponte |
-| X7 | Sem internet no celular | faixa "Sem internet"; a tela antiga é descartada, não gravada | volta sozinho |
+| X6 | Servidor fora do ar ou endereço errado | faixa / cartão com o endereço | Tentar de novo; conferir o servidor no campo |
+| X7 | Sem internet no celular | faixa "Sem internet"; a tela fica congelada e esmaecida, com a hora da última atualização, só em memória, e é descartada depois de 5 min fora do primeiro plano (AJ-11) | volta sozinho |
 | X8 | PC dormindo / desligado | "LUCAS-PC está offline desde 14:02" | nenhuma ação remota; acordar o PC |
 | X9 | Conexão caiu no meio de um envio | "Conferindo no PC se chegou…" → "Chegou" / "Não chegou; seu texto continua aqui" | `cmd.status`, nunca reenvio automático |
 | X10 | A tela mudou antes do envio | "A tela mudou antes do envio. Nada foi enviado." | Conferir e enviar de novo |
@@ -192,9 +206,12 @@ o PC → Remover LUCAS-PC (`#remove_pc`).
 | X12 | Aparelho revogado | tela cheia de revogado | Adicionar de novo |
 | X13 | Acesso cortado | tela "cortado" | Só o PC reativa |
 | X14 | Agente parado no PC | PC: "Pipa parada" (warning); celular: PC offline | Iniciar agente |
-| X15 | Versões diferentes | "Atualize a Pipa…" | Loja |
+| X15 | Versões diferentes | app mais velho: "Atualize a Pipa…"; extensão mais velha: "Atualize a extensão Pipa em LUCAS-PC…" (AJ-21) | Loja / atualizar no PC |
 | X16 | Sem biometria nem bloqueio no Android | a folha explica e leva às configurações | Configurar bloqueio |
-| X17 | Câmera negada | aba QR explica; aba Digitar funciona | Digitar código |
+| X17 | Leitor de QR indisponível | aba QR explica (`add.qr_unavailable`, AJ-04); aba Digitar funciona | Digitar o código e o servidor |
+| X18 | PC recusou a autenticação três vezes (4401) | tela cheia "LUCAS-PC recusou este celular", sem nova tentativa automática (AJ-20) | Conferir Aparelhos no VS Code; Tentar de novo ou Adicionar de novo |
+| X19 | Texto com várias linhas no campo de envio | "O texto tem várias linhas. Envie uma linha por vez."; nada é enviado e o texto fica (AJ-10) | Enviar uma linha por vez |
+| X20 | QR com servidor diferente dos outros computadores | diálogo "Usar outro servidor?" (AJ-03) | Cancelar; usar só se foi a própria pessoa que configurou |
 
 ```mermaid
 flowchart LR
@@ -210,5 +227,6 @@ flowchart LR
     W -->|4403| X12[Revogado]
     W -->|4410| X13[Cortado]
     W -->|4426| X15[Atualizar]
+    W -->|4401 três vezes| X18[Recusado pelo PC]
   end
 ```
