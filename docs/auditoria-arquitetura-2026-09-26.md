@@ -717,7 +717,10 @@ vscode-remote/
 
 - **Pergunta 1** — produto para **terminais genéricos**, com dados só na
   rede do usuário. Confirma o modelo B.
-- **Pergunta 2** — **só sessões opt-in** (perfil "Terminal remoto").
+- **Pergunta 2** — **só sessões do perfil "Terminal remoto"**. Refinamento
+  do mesmo dia: esse perfil vira o **perfil padrão** do VS Code, então todo
+  terminal aberto aparece no celular, **somente leitura** por padrão (ver
+  seção 13).
 - **Pergunta 3** — **arm por sessão com biometria** por alguns minutos;
   aprovações destrutivas pedem biometria de novo.
 
@@ -738,6 +741,46 @@ Seguem abertas: 4 (push), 5 (SSH/WSL) e 6 (licença).
    distribuidor).
 5. **Escopo de Remote-SSH/WSL** no primeiro ano.
 6. **Licença** do repositório público.
+
+---
+
+## 13. Requisitos de leveza e praticidade
+
+Ideia central reafirmada por Sr. Garioli em 2026-09-26: *controlar a
+distância os terminais abertos no VS Code, com segurança e praticidade,
+tudo leve de rodar.*
+
+**Praticidade (decidido):**
+
+- A extensão registra o perfil "Terminal remoto" e o define como perfil
+  padrão.
+  - Todo terminal aberto no VS Code (atalho, botão "+") já nasce acessível
+    pelo celular, sem passo extra.
+  - O shell continua o do usuário (pwsh, bash, cmd); o perfil só o embrulha
+    no PTY do agente.
+- Grant padrão de cada nova sessão: **read** para os dispositivos pareados.
+  A escrita exige arm por sessão com biometria (pergunta 3).
+- O VS Code mostra um indicador em todo terminal com controle remoto ativo e
+  oferece um comando "cortar acesso remoto" (kill switch global).
+- A instalação precisa ser simples:
+  - A extensão traz o binário do agente (VSIX por plataforma) e o inicia.
+  - O pairing é por QR, uma única vez.
+  - O único pré-requisito externo é o Tailscale ligado no celular.
+- **[INFERÊNCIA]** Os terminais comuns que já existiam antes da instalação,
+  ou abertos por outro perfil explicitamente, continuam só locais (C1).
+
+**Leveza — metas não funcionais.** São metas, ainda não medições; M0 mede e
+M2 transforma em teste de regressão.
+
+| Componente | Meta |
+|---|---|
+| Agente parado (sem sessões) | ≤ 20 MB RSS, ~0 % CPU (só eventos, sem polling) |
+| Agente por sessão | ≤ 5 MB (scrollback limitado a ~2 000 linhas) |
+| Agente com 4 sessões ativas + 1 celular assistindo | ≤ 2 % de um núcleo em regime |
+| Extensão | Sem módulo nativo; só ponte IPC ⇄ Pseudoterminal; ativação `onStartupFinished` |
+| Latência tecla no celular → eco na tela (mesma cidade, Tailscale direto) | ≤ 150 ms p95 |
+| Celular em segundo plano | Nenhuma conexão aberta; só push opaco (M8) |
+| Tráfego de um `cat` de 100 MB com o celular assistindo | Limitado pela coalescência (~20 frames/s), não pelo volume de saída |
 
 ---
 
