@@ -12,8 +12,8 @@ documentos, protótipos visuais de interface e planos.
 | # | Entrega | Arquivo(s) | Modelo · effort sugerido | Depende de |
 |---|---|---|---|---|
 | P1 | Glossário e visão do produto: nome, público, promessa, o que **não** faz | `docs/visao.md` | Opus · high | — |
-| P2 | ADRs das decisões já tomadas (agente dono do PTY, perfil padrão só leitura, arm por biometria, ponte própria + código, sem Tailscale/Dev Tunnels) | `docs/adr/0001…0006` | Opus · high | P1 |
-| P3 | Especificação do protocolo TRCP/1: envelope, handshake, Event Log, Screen Sync, comandos, erros, limites, versionamento + fixtures de conformidade descritas | `docs/spec/trcp-1.md` | Opus · xhigh | P2 |
+| P2 | ADRs das decisões já tomadas (agente dono do PTY, perfil padrão só leitura, arm por biometria, ponte própria + código, sem Tailscale/Dev Tunnels, e as demais do índice) — **feito (aguarda revisão)** | `docs/adr/README.md` + `docs/adr/0001…0014` | Opus · high | P1 |
+| P3 | Especificação do protocolo TRCP/1: envelope, handshake, Event Log, Screen Sync, comandos, erros, limites, versionamento + fixtures de conformidade descritas — **feito (aguarda revisão)** | `docs/spec/trcp-1.md` | Opus · xhigh | P2 |
 | P4 | Especificação da ponte (`trc-bridge`): encontro por código, modos permanente e sob demanda, abusos, limites | `docs/spec/bridge.md` | **Fable · max** | P3 |
 | P5 | Segurança: threat model consolidado, pareamento (SPAKE2), TLS fixado, chaves, biometria, revogação, auditoria; **revisão Fable max** | `docs/security.md` | **Fable · max** | P3, P4 |
 | P6 | Privacidade: política de dados (o que fica no PC, o que chega ao celular, retenção) | `docs/privacy.md` | Opus · high | P3 |
