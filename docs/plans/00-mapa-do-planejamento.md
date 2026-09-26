@@ -16,9 +16,9 @@ documentos, protótipos visuais de interface e planos.
 | P3 | Especificação do protocolo TRCP/1: envelope, handshake, Event Log, Screen Sync, comandos, erros, limites, versionamento + fixtures de conformidade descritas — **feito (aguarda revisão)** | `docs/spec/trcp-1.md` | Opus · xhigh | P2 |
 | P4 | Especificação da ponte (`trc-bridge`): encontro por código, modos permanente e sob demanda, abusos, limites | `docs/spec/bridge.md` | **Fable · max** | P3 |
 | P5 | Segurança: threat model consolidado, pareamento (SPAKE2), TLS fixado, chaves, biometria, revogação, auditoria; **revisão Fable max** | `docs/security.md` | **Fable · max** | P3, P4 |
-| P6 | Privacidade: política de dados (o que fica no PC, o que chega ao celular, retenção) | `docs/privacy.md` | Opus · high | P3 |
+| P6 | Privacidade: política de dados (o que fica no PC, o que chega ao celular, retenção) — **feito (aguarda revisão)** | `docs/privacy.md` | Opus · high | P3 |
 | P7 | **Interfaces**: fluxos, telas e estados do VS Code e do Android, textos (UX writing), acessibilidade, **protótipo visual navegável** | `docs/interfaces/` | Opus · high (+ skill de UX) | P1, P5 (fluxo de pareamento) |
-| P8 | Requisitos não funcionais: leveza, latência, bateria, com o método de medição | `docs/requisitos-nao-funcionais.md` | Opus · high | P3 |
+| P8 | Requisitos não funcionais: leveza, latência, bateria, com o método de medição — **feito (aguarda revisão)** | `docs/requisitos-nao-funcionais.md` | Opus · high | P3 |
 | P9 | Planos por fase (M0 spikes → M8 push): tarefas, arquivos, testes, Definição de Pronto, modelo/effort por tarefa | `docs/plans/M0…M8.md` | Opus · xhigh; M6 **Fable · max** | P2–P8 |
 | P10 | Quadro de andamento no README | `README.md` | Opus · high | P9 |
 
