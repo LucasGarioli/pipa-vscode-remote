@@ -1,0 +1,1029 @@
+<title>Pipa Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens Pipa (fonte: docs/interfaces/identidade-visual.md) ===== */
+:root{
+  color-scheme: light;
+  --bg:#F4F1EA; --surface:#FCFBF7; --surface2:#E9E5DC; --term:#FFFDF8;
+  --ink:#11141A; --ink2:#3D434F; --ink3:#595F6A;
+  --line:#D6D0C4; --line-strong:#857E70;
+  --primary:#11141A; --on-primary:#F4F1EA;
+  --accent:#F2A93B; --on-accent:#11141A; --accent-text:#8A5300; --accent-surface:#FBE8C4; --focus:#8A5300;
+  --ok:#1C6B3B; --ok-surface:#DCEFE2;
+  --attn:#8A5300; --attn-surface:#FBE8C4; --attn-strong:#B06C00;
+  --armed:#86277D; --on-armed:#FFFFFF; --armed-surface:#F4E0F0;
+  --danger:#B0251C; --on-danger:#FFFFFF; --danger-surface:#F8E1DC;
+  --offline:#595F6A; --kite-tail:#11141A; --frame:#11141A;
+  --scrim:rgba(17,20,26,.48);
+  --shadow:0 12px 32px rgba(17,20,26,.18);
+  --t0:#1B2326; --t1:#B3261E; --t2:#1C6E3D; --t3:#7A5A00; --t4:#1F58B5; --t5:#8A2A80; --t6:#0A6A73; --t8:#5F6C71;
+  --page:#E9E5DC;
+  /* VS Code (simulação do tema Light Modern; na extensão real vêm do editor) */
+  --vscode-editor-background:#FFFFFF; --vscode-sideBar-background:#F8F8F8; --vscode-panel-background:#F8F8F8;
+  --vscode-foreground:#3B3B3B; --vscode-descriptionForeground:#6A6A6A; --vscode-focusBorder:#005FB8;
+  --vscode-button-background:#005FB8; --vscode-button-foreground:#FFFFFF;
+  --vscode-button-secondaryBackground:#E5E5E5; --vscode-button-secondaryForeground:#3B3B3B;
+  --vscode-statusBar-background:#F8F8F8; --vscode-statusBar-foreground:#3B3B3B; --vscode-statusBar-border:#E5E5E5;
+  --vscode-statusBarItem-warningBackground:#8F5A00; --vscode-statusBarItem-warningForeground:#FFFFFF;
+  --vscode-widget-border:#E5E5E5; --vscode-editorWidget-background:#F8F8F8; --vscode-input-background:#FFFFFF; --vscode-input-border:#CECECE;
+  --vscode-textLink-foreground:#005FB8; --vscode-list-activeSelectionBackground:#E8E8E8; --vscode-terminal-foreground:#3B3B3B;
+  --vscode-titleBar-background:#F8F8F8; --vscode-activityBar-background:#F8F8F8; --vscode-tab-activeBackground:#FFFFFF; --vscode-tab-inactiveBackground:#F8F8F8;
+  --vscode-terminal-ansiYellow:#8A5300; --vscode-notifications-background:#FFFFFF;
+  --vscode-editor-font-family: "JetBrains Mono", Consolas, "Cascadia Mono", monospace;
+  --vscode-font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-ui:"IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#11141A; --surface:#191D25; --surface2:#232833; --term:#0C0E12;
+    --ink:#ECE8DF; --ink2:#A3AAB8; --ink3:#8A91A0;
+    --line:#2C323D; --line-strong:#6E7684;
+    --primary:#ECE8DF; --on-primary:#11141A;
+    --accent:#F2A93B; --on-accent:#11141A; --accent-text:#F2A93B; --accent-surface:#3A2C12; --focus:#F2A93B;
+    --ok:#6CCB91; --ok-surface:#132D1F;
+    --attn:#F2A93B; --attn-surface:#3A2C12; --attn-strong:#F2A93B;
+    --armed:#E48ADB; --on-armed:#2A0827; --armed-surface:#37163A;
+    --danger:#FF8A7D; --on-danger:#3A0803; --danger-surface:#3B1511;
+    --offline:#8A91A0; --kite-tail:#F2A93B; --frame:#3A404C;
+    --scrim:rgba(0,0,0,.6); --shadow:0 12px 32px rgba(0,0,0,.5);
+    --t0:#A7B3B8; --t1:#FF8A7D; --t2:#6CCB91; --t3:#EDBE4C; --t4:#7FB0FF; --t5:#E48ADB; --t6:#5FC4CD; --t8:#8A979C;
+    --page:#0B0D11;
+    --vscode-editor-background:#1F1F1F; --vscode-sideBar-background:#181818; --vscode-panel-background:#181818;
+    --vscode-foreground:#CCCCCC; --vscode-descriptionForeground:#9D9D9D; --vscode-focusBorder:#0078D4;
+    --vscode-button-background:#0078D4; --vscode-button-foreground:#FFFFFF;
+    --vscode-button-secondaryBackground:#313131; --vscode-button-secondaryForeground:#CCCCCC;
+    --vscode-statusBar-background:#181818; --vscode-statusBar-foreground:#CCCCCC; --vscode-statusBar-border:#2B2B2B;
+    --vscode-statusBarItem-warningBackground:#8F5A00; --vscode-statusBarItem-warningForeground:#FFFFFF;
+    --vscode-widget-border:#2B2B2B; --vscode-editorWidget-background:#202020; --vscode-input-background:#313131; --vscode-input-border:#3C3C3C;
+    --vscode-textLink-foreground:#4DAAFC; --vscode-list-activeSelectionBackground:#2A2D2E; --vscode-terminal-foreground:#CCCCCC;
+    --vscode-titleBar-background:#181818; --vscode-activityBar-background:#181818; --vscode-tab-activeBackground:#1F1F1F; --vscode-tab-inactiveBackground:#181818;
+    --vscode-terminal-ansiYellow:#E5C07B; --vscode-notifications-background:#202020;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#11141A; --surface:#191D25; --surface2:#232833; --term:#0C0E12;
+  --ink:#ECE8DF; --ink2:#A3AAB8; --ink3:#8A91A0;
+  --line:#2C323D; --line-strong:#6E7684;
+  --primary:#ECE8DF; --on-primary:#11141A;
+  --accent:#F2A93B; --on-accent:#11141A; --accent-text:#F2A93B; --accent-surface:#3A2C12; --focus:#F2A93B;
+  --ok:#6CCB91; --ok-surface:#132D1F;
+  --attn:#F2A93B; --attn-surface:#3A2C12; --attn-strong:#F2A93B;
+  --armed:#E48ADB; --on-armed:#2A0827; --armed-surface:#37163A;
+  --danger:#FF8A7D; --on-danger:#3A0803; --danger-surface:#3B1511;
+  --offline:#8A91A0; --kite-tail:#F2A93B; --frame:#3A404C;
+  --scrim:rgba(0,0,0,.6); --shadow:0 12px 32px rgba(0,0,0,.5);
+  --t0:#A7B3B8; --t1:#FF8A7D; --t2:#6CCB91; --t3:#EDBE4C; --t4:#7FB0FF; --t5:#E48ADB; --t6:#5FC4CD; --t8:#8A979C;
+  --page:#0B0D11;
+  --vscode-editor-background:#1F1F1F; --vscode-sideBar-background:#181818; --vscode-panel-background:#181818;
+  --vscode-foreground:#CCCCCC; --vscode-descriptionForeground:#9D9D9D; --vscode-focusBorder:#0078D4;
+  --vscode-button-background:#0078D4; --vscode-button-foreground:#FFFFFF;
+  --vscode-button-secondaryBackground:#313131; --vscode-button-secondaryForeground:#CCCCCC;
+  --vscode-statusBar-background:#181818; --vscode-statusBar-foreground:#CCCCCC; --vscode-statusBar-border:#2B2B2B;
+  --vscode-statusBarItem-warningBackground:#8F5A00; --vscode-statusBarItem-warningForeground:#FFFFFF;
+  --vscode-widget-border:#2B2B2B; --vscode-editorWidget-background:#202020; --vscode-input-background:#313131; --vscode-input-border:#3C3C3C;
+  --vscode-textLink-foreground:#4DAAFC; --vscode-list-activeSelectionBackground:#2A2D2E; --vscode-terminal-foreground:#CCCCCC;
+  --vscode-titleBar-background:#181818; --vscode-activityBar-background:#181818; --vscode-tab-activeBackground:#1F1F1F; --vscode-tab-inactiveBackground:#181818;
+  --vscode-terminal-ansiYellow:#E5C07B; --vscode-notifications-background:#202020;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:20px 40px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.i{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg.i.s18{width:18px;height:18px}
+svg.i.s16{width:16px;height:16px}
+.mono{font-family:var(--font-mono)}
+
+/* ===== Moldura do protótipo ===== */
+.top{max-width:1320px;margin:0 auto 20px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+.brand h1{margin:0;font-family:var(--font-mono);font-weight:800;font-size:28px;letter-spacing:-1px;line-height:1}
+.brand h1 span{color:var(--accent-text)}
+.brand p{margin:4px 0 0;color:var(--ink2);font-size:14px;max-width:62ch}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.ctl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+.segp{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+.segp button{border:0;background:transparent;min-height:40px;padding:0 12px;cursor:pointer;font-size:14px;color:var(--ink)}
+.segp button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+select.jump{min-height:40px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;padding:0 8px;max-width:260px}
+.plain{min-height:40px;border:1px solid var(--line-strong);border-radius:8px;background:transparent;padding:0 12px;cursor:pointer;font-size:14px}
+.stage{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:980px){.stage{grid-template-columns:minmax(0,1fr)}}
+.col > h2{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase}
+
+/* ===== Celular ===== */
+.phone{width:min(380px,100%);margin:0 auto;border:10px solid var(--frame);border-radius:38px;background:var(--bg);overflow:hidden;box-shadow:0 20px 50px rgba(17,20,26,.25);position:relative}
+.screen{height:760px;display:flex;flex-direction:column;position:relative;background:var(--bg);overflow:hidden}
+.sbar{height:28px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:12px;font-weight:600;color:var(--ink);font-family:var(--font-ui)}
+.sbar .ic{display:flex;gap:6px;align-items:center}
+.gbar{height:18px;flex:none;display:flex;align-items:center;justify-content:center}
+.gbar i{width:110px;height:4px;border-radius:2px;background:var(--ink);opacity:.5}
+.content{flex:1;overflow:auto;display:flex;flex-direction:column;min-height:0}
+.appbar{min-height:56px;flex:none;display:flex;align-items:center;gap:4px;padding:4px 4px 4px 4px;background:var(--bg)}
+.appbar .ttl{flex:1;min-width:0;padding-left:4px}
+.appbar .ttl b{display:block;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .ttl small{display:block;font-family:var(--font-mono);font-size:12px;color:var(--ink2);line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:48px;height:48px;border:0;background:transparent;border-radius:24px;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex:none}
+.ib:hover{background:var(--surface2)}
+.wordmark{display:flex;align-items:center;gap:8px;padding-left:12px;flex:1}
+.wordmark b{font-family:var(--font-mono);font-weight:800;font-size:22px;letter-spacing:-.5px}
+.pad{padding:0 16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.btn{min-height:48px;border-radius:8px;border:1px solid transparent;padding:0 20px;font-weight:600;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center}
+.btn.full{width:100%}
+.btn.primary{background:var(--primary);color:var(--on-primary)}
+.btn.accent{background:var(--accent);color:var(--on-accent)}
+.btn.secondary{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.btn.danger{background:var(--danger);color:var(--on-danger)}
+.btn.armed{background:var(--armed);color:var(--on-armed)}
+.btn.text{background:transparent;color:var(--accent-text);padding:0 12px}
+.btn[aria-disabled="true"]{background:var(--surface2);color:var(--ink3);border-color:var(--surface2);cursor:not-allowed}
+.row{display:flex;gap:12px}
+.row>.btn{flex:1}
+.hint{font-size:13px;color:var(--ink2);margin:0}
+.h1{font-size:24px;line-height:30px;font-weight:600;margin:0;text-wrap:balance}
+.h2{font-size:18px;line-height:24px;font-weight:600;margin:0}
+.body{font-size:15px;line-height:22px;color:var(--ink2);margin:0}
+
+.welcome-hero{display:flex;flex-direction:column;gap:14px;padding:28px 20px 8px}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:15px;line-height:22px}
+.steps li::before{content:counter(s);font-family:var(--font-mono);font-weight:600;font-size:13px;width:28px;height:28px;border-radius:6px;background:var(--surface2);display:grid;place-items:center;color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;min-height:72px;padding:10px 16px;background:transparent;border:0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer;width:100%;color:var(--ink)}
+.li:hover{background:var(--surface2)}
+.li .main{flex:1;min-width:0}
+.li .name{font-weight:600;font-size:16px;line-height:22px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.li .sub{display:block;font-family:var(--font-mono);font-size:12.5px;line-height:18px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .chev{color:var(--ink3)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:12px;line-height:16px;font-weight:600;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.chip.attn{background:var(--attn-surface);color:var(--attn)}
+.chip.ok{background:var(--ok-surface);color:var(--ok)}
+.chip.danger{background:var(--danger-surface);color:var(--danger)}
+.chip.neutral{background:var(--surface2);color:var(--ink2)}
+.chip.armed{background:var(--armed-surface);color:var(--armed)}
+.chip.off{background:var(--surface2);color:var(--offline)}
+.st{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;flex:none}
+.st.attn{background:var(--attn-surface);color:var(--attn)}
+.st.ok{background:var(--ok-surface);color:var(--ok)}
+.st.danger{background:var(--danger-surface);color:var(--danger)}
+.st.neutral{background:var(--surface2);color:var(--ink2)}
+.st.off{background:var(--surface2);color:var(--offline)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.sec{font-size:13px;font-weight:600;color:var(--ink2);padding:16px 16px 6px;margin:0}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;font-size:14px;line-height:20px;border-bottom:1px solid var(--line)}
+.banner.attn{background:var(--accent);color:var(--on-accent);border:0}
+.banner.danger{background:var(--danger-surface);color:var(--danger)}
+.banner.neutral{background:var(--surface2);color:var(--ink)}
+.banner.armed{background:var(--armed);color:var(--on-armed);border:0}
+.banner .grow{flex:1;min-width:0}
+.banner .act{margin:-10px -8px -10px 0}
+.banner .act .btn{min-height:44px}
+.banner.attn .btn.text,.banner.armed .btn.text{color:inherit;text-decoration:underline}
+.empty{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding:32px 20px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600;font-size:14px}
+.input{min-height:52px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px;padding:0 14px;width:100%}
+.input:focus{outline:2px solid var(--focus);outline-offset:0;border-color:var(--focus)}
+.input.code{font-family:var(--font-mono);font-size:22px;letter-spacing:.06em;text-align:center;font-weight:600}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 16px}
+.tabs button{flex:1;min-height:48px;border:0;background:transparent;cursor:pointer;font-weight:600;font-size:15px;color:var(--ink2);border-bottom:3px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.viewfinder{margin:16px;aspect-ratio:1/1;max-width:100%;border-radius:16px;background:#11141A;position:relative;display:grid;place-items:center;overflow:hidden}
+.viewfinder .frame{width:62%;aspect-ratio:1/1;border:3px solid #F2A93B;border-radius:18px}
+.viewfinder small{position:absolute;bottom:14px;left:14px;right:14px;color:#ECE8DF;font-size:13px;text-align:center}
+.sas{font-family:var(--font-mono);font-size:40px;font-weight:800;letter-spacing:.06em;text-align:center;padding:18px 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-variant-numeric:tabular-nums}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--surface2);border-top-color:var(--accent-text);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.errcard{display:flex;gap:12px;padding:14px;border-radius:12px;background:var(--danger-surface);color:var(--danger)}
+.errcard b{display:block;font-size:15px}
+.errcard p{margin:4px 0 0;color:var(--ink);font-size:14px;line-height:20px}
+
+/* terminal */
+.modebar{display:flex;align-items:center;gap:10px;min-height:52px;padding:4px 8px 4px 16px;font-size:14px}
+.modebar.ro{background:var(--surface2);color:var(--ink)}
+.modebar.on{background:var(--armed);color:var(--on-armed)}
+.modebar .grow{flex:1;min-width:0;line-height:18px}
+.modebar small{display:block;font-size:12px;opacity:.9}
+.modebar .btn{min-height:44px;padding:0 14px}
+.modebar.on .btn{background:transparent;color:var(--on-armed);border-color:var(--on-armed)}
+.term{flex:1;min-height:0;overflow:auto;background:var(--term);font-family:var(--font-mono);font-size:13px;line-height:19px;padding:10px 12px;color:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.term .ln{white-space:pre-wrap;word-break:break-word;min-height:19px}
+.term .meta{font-family:var(--font-ui);font-size:12px;color:var(--ink2);padding:6px 0;display:flex;gap:8px;align-items:center}
+.t-dim{color:var(--t8)}.t-red{color:var(--t1)}.t-green{color:var(--t2)}.t-yellow{color:var(--t3)}.t-blue{color:var(--t4)}.t-magenta{color:var(--t5)}.t-cyan{color:var(--t6)}.t-b{font-weight:600}
+.pinned{display:flex;gap:10px;align-items:center;background:var(--accent);color:var(--on-accent);padding:6px 8px 6px 14px;font-size:14px}
+.pinned .grow{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pinned .btn{min-height:40px;background:var(--on-accent);color:var(--accent);padding:0 12px;font-size:14px}
+.composer{padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.composer .line{display:flex;gap:8px;align-items:stretch}
+.composer .input{min-height:48px;font-family:var(--font-mono);font-size:14px}
+.composer .input:disabled{background:var(--surface2);color:var(--ink3);border-color:var(--line)}
+.composer .send{width:56px;min-height:48px;padding:0}
+.keys{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.keys .k-enter{grid-column:1 / span 2}
+.keys .k-ctrlc{grid-column:5 / span 2;border-color:var(--danger);color:var(--danger)}
+.keys button{min-width:48px;height:48px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);font-family:var(--font-mono);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
+.keys button[aria-disabled="true"]{color:var(--ink3);border-color:var(--line);background:var(--surface2);cursor:not-allowed}
+.keys .sep{width:1px;background:var(--line);flex:none;margin:6px 4px}
+.statusline{font-size:13px;line-height:18px;padding:0 4px;color:var(--ink2);min-height:18px}
+.statusline.err{color:var(--danger)}
+.statusline.ok{color:var(--ok)}
+
+/* atenção */
+.attn-body{padding:8px 16px 16px;display:flex;flex-direction:column;gap:14px}
+.srcbadge{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--ink2)}
+.srcbadge.warn{color:var(--attn);background:var(--attn-surface);padding:8px 10px;border-radius:8px;align-items:flex-start;line-height:18px}
+.cmdbox{font-family:var(--font-mono);font-size:15px;line-height:22px;background:var(--term);border:1px solid var(--line-strong);border-radius:10px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;user-select:text}
+.note{display:flex;gap:10px;padding:12px;border-radius:10px;font-size:14px;line-height:20px}
+.note.danger{background:var(--danger-surface);color:var(--danger)}
+.note.neutral{background:var(--surface2);color:var(--ink)}
+.note.ok{background:var(--ok-surface);color:var(--ok)}
+.note.attn{background:var(--attn-surface);color:var(--attn)}
+.actions{padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);background:var(--bg)}
+
+/* overlays */
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:flex-end;z-index:5}
+.scrim.center{align-items:center;justify-content:center;padding:24px}
+.sheet{width:100%;background:var(--surface);border-radius:20px 20px 0 0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+.sheet .grab{width:32px;height:4px;border-radius:2px;background:var(--line-strong);margin:4px auto 0}
+.dialog{width:100%;background:var(--surface);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.dialog .btns{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+.seg button{flex:1;min-height:48px;border:0;background:transparent;cursor:pointer;font-family:var(--font-mono);font-weight:600;color:var(--ink)}
+.seg button+button{border-left:1px solid var(--line-strong)}
+.seg button[aria-checked="true"]{background:var(--primary);color:var(--on-primary)}
+.bio{background:var(--surface);border-radius:24px 24px 0 0;width:100%;padding:24px 20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.bio .fp{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--surface2);color:var(--ink);cursor:pointer;margin:16px 0 4px}
+.bio .fp svg{width:40px;height:40px}
+.bio .actions2{display:flex;justify-content:space-between;width:100%;margin-top:8px}
+.snack{position:absolute;left:12px;right:12px;bottom:26px;background:var(--ink);color:var(--bg);border-radius:8px;padding:12px 14px;font-size:14px;line-height:20px;display:flex;gap:12px;align-items:center;z-index:6;box-shadow:var(--shadow)}
+.snack .grow{flex:1}
+.heads{position:absolute;left:8px;right:8px;top:32px;z-index:7;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:12px 14px;display:flex;gap:12px;cursor:pointer;text-align:left;color:var(--ink)}
+.heads small{display:block;color:var(--ink2);font-size:12px}
+.appicon{width:36px;height:36px;border-radius:9px;background:#11141A;display:grid;place-items:center;flex:none}
+.lock{flex:1;display:flex;flex-direction:column;align-items:center;padding:40px 12px;gap:6px;background:#11141A;color:#ECE8DF}
+.lock .clock{font-size:64px;font-weight:300;line-height:1;letter-spacing:-2px}
+.lock .date{font-size:14px;opacity:.85;margin-bottom:28px}
+.lock .n{width:100%;background:#232833;border-radius:16px;padding:12px 14px;display:flex;gap:12px;border:0;color:#ECE8DF;text-align:left;cursor:pointer}
+.lock .n small{display:block;color:#A3AAB8;font-size:12px}
+.lock .cap{font-size:12px;color:#A3AAB8;margin-top:6px;align-self:flex-start}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:8px 16px;border-bottom:1px solid var(--line)}
+.setrow .l{min-width:0}
+.setrow .l b{display:block;font-weight:600;font-size:15px}
+.setrow .l small{display:block;color:var(--ink2);font-size:13px;line-height:18px}
+.switch{width:52px;height:32px;border-radius:16px;border:2px solid var(--line-strong);background:var(--surface2);position:relative;cursor:pointer;flex:none}
+.switch::after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--line-strong);transition:left .15s}
+.switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.switch[aria-checked="true"]::after{left:24px;background:var(--on-primary)}
+.audit{font-size:13px;line-height:18px;padding:8px 16px;display:grid;grid-template-columns:52px 1fr;gap:8px;border-bottom:1px solid var(--line)}
+.audit time{font-family:var(--font-mono);color:var(--ink2);font-variant-numeric:tabular-nums}
+
+/* ===== VS Code (simulação) ===== */
+.vsc{border:1px solid var(--vscode-widget-border);border-radius:10px;overflow:hidden;background:var(--vscode-editor-background);color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:13px;line-height:1.4;position:relative;display:flex;flex-direction:column;min-height:640px}
+.vs-title{height:34px;background:var(--vscode-titleBar-background);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--vscode-descriptionForeground);border-bottom:1px solid var(--vscode-widget-border);flex:none}
+.vs-body{flex:1;display:flex;min-height:0}
+.vs-act{width:44px;background:var(--vscode-activityBar-background);border-right:1px solid var(--vscode-widget-border);display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:12px;color:var(--vscode-descriptionForeground);flex:none}
+@media (max-width:560px){.vs-act{display:none}}
+.vs-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.vs-tabs{display:flex;background:var(--vscode-tab-inactiveBackground);border-bottom:1px solid var(--vscode-widget-border);overflow-x:auto;flex:none}
+.vs-tab{display:flex;align-items:center;gap:6px;padding:0 12px;height:34px;font-size:13px;border:0;border-right:1px solid var(--vscode-widget-border);background:transparent;color:var(--vscode-descriptionForeground);cursor:pointer;white-space:nowrap}
+.vs-tab[aria-selected="true"]{background:var(--vscode-tab-activeBackground);color:var(--vscode-foreground)}
+.vs-editor{flex:1;min-height:250px;overflow:auto;position:relative}
+.code{font-family:var(--vscode-editor-font-family);font-size:13px;line-height:20px;padding:10px 0;white-space:pre;color:var(--vscode-foreground)}
+.code i{display:inline-block;width:40px;text-align:right;padding-right:14px;color:var(--vscode-descriptionForeground);font-style:normal}
+.vs-panel{height:280px;border-top:1px solid var(--vscode-widget-border);background:var(--vscode-panel-background);display:flex;flex-direction:column;flex:none}
+.vs-ptabs{display:flex;gap:18px;padding:0 14px;height:34px;align-items:center;flex:none}
+.vs-ptabs button{border:0;background:transparent;height:34px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--vscode-descriptionForeground);cursor:pointer;border-bottom:1px solid transparent;display:flex;gap:6px;align-items:center}
+.vs-ptabs button[aria-selected="true"]{color:var(--vscode-foreground);border-bottom-color:var(--vscode-focusBorder)}
+.vs-ptabs .sp{flex:1}
+.vs-tico{border:0;background:transparent;width:26px;height:26px;border-radius:4px;display:grid;place-items:center;cursor:pointer;color:var(--vscode-foreground)}
+.vs-tico:hover{background:var(--vscode-list-activeSelectionBackground)}
+.vs-pbody{flex:1;min-height:0;display:flex}
+.vs-term{flex:1;min-width:0;overflow:auto;font-family:var(--vscode-editor-font-family);font-size:12.5px;line-height:18px;padding:6px 14px;color:var(--vscode-terminal-foreground)}
+.vs-term .ln{white-space:pre}
+.vs-tlist{width:230px;border-left:1px solid var(--vscode-widget-border);overflow:auto;flex:none}
+@media (max-width:700px){.vs-tlist{width:160px}}
+.vs-titem{display:flex;align-items:center;gap:6px;width:100%;min-height:24px;padding:3px 8px;border:0;background:transparent;color:var(--vscode-foreground);cursor:pointer;font-size:13px;text-align:left}
+.vs-titem span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs-titem[aria-selected="true"]{background:var(--vscode-list-activeSelectionBackground)}
+.vs-tree{flex:1;overflow:auto;padding:4px 0}
+.vs-row{display:flex;align-items:center;gap:6px;min-height:24px;padding:2px 10px;font-size:13px}
+.vs-row .d{color:var(--vscode-descriptionForeground);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs-row .grow{flex:1;min-width:0;display:flex;gap:8px;align-items:baseline;overflow:hidden}
+.vs-row .grow>span:first-child{white-space:nowrap}
+.vs-welcome{padding:12px 16px;display:flex;flex-direction:column;gap:10px;max-width:320px}
+.vs-status{height:24px;background:var(--vscode-statusBar-background);color:var(--vscode-statusBar-foreground);border-top:1px solid var(--vscode-statusBar-border);display:flex;align-items:stretch;font-size:12px;flex:none}
+.vs-status .it{display:flex;align-items:center;gap:4px;padding:0 8px;border:0;background:transparent;color:inherit;cursor:default;font-size:12px}
+.vs-status button.it{cursor:pointer}
+.vs-status button.it:hover{background:rgba(128,128,128,.18)}
+.vs-status .it.warn{background:var(--vscode-statusBarItem-warningBackground);color:var(--vscode-statusBarItem-warningForeground)}
+.vs-status .sp{flex:1}
+.vbtn{border:0;border-radius:2px;padding:5px 12px;font-size:13px;cursor:pointer;background:var(--vscode-button-background);color:var(--vscode-button-foreground);min-height:28px}
+.vbtn.sec{background:var(--vscode-button-secondaryBackground);color:var(--vscode-button-secondaryForeground)}
+.vs-modal-scrim{position:absolute;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:5;padding:16px}
+.vs-modal{background:var(--vscode-editorWidget-background);border:1px solid var(--vscode-widget-border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:480px;width:100%;padding:18px 18px 14px;display:flex;flex-direction:column;gap:10px}
+.vs-modal .hd{display:flex;gap:12px;align-items:flex-start}
+.vs-modal .hd b{font-size:14px}
+.vs-modal p{margin:0;white-space:pre-line;color:var(--vscode-foreground)}
+.vs-modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.vs-qp{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:min(520px,94%);background:var(--vscode-editorWidget-background);border:1px solid var(--vscode-widget-border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:5;padding:6px}
+.vs-qp .in{border:1px solid var(--vscode-focusBorder);background:var(--vscode-input-background);padding:5px 8px;font-size:13px;color:var(--vscode-descriptionForeground);border-radius:2px;margin-bottom:4px}
+.vs-qp button{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:0;background:transparent;color:var(--vscode-foreground);padding:5px 8px;border-radius:3px;cursor:pointer;text-align:left;font-size:13px}
+.vs-qp button:hover,.vs-qp button:focus-visible{background:var(--vscode-list-activeSelectionBackground)}
+.vs-qp button small{color:var(--vscode-descriptionForeground);font-size:12px}
+.vs-qp .lbl{display:flex;gap:8px;align-items:center}
+.vs-toasts{position:absolute;right:12px;bottom:34px;display:flex;flex-direction:column;gap:8px;z-index:4;width:min(380px,92%)}
+.vs-toast{background:var(--vscode-notifications-background);border:1px solid var(--vscode-widget-border);border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.3);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.vs-toast .hd{display:flex;gap:8px;align-items:flex-start}
+.vs-toast .hd span{flex:1}
+.vs-toast .btns{display:flex;justify-content:flex-end;gap:8px}
+/* webview do pareamento: só variáveis --vscode-* */
+.wv{padding:22px 26px;display:flex;flex-direction:column;gap:16px;max-width:640px;font-family:var(--vscode-font-family);color:var(--vscode-foreground)}
+.wv h3{margin:0;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center}
+.wv ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.wv .grid{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:20px;align-items:center}
+@media (max-width:620px){.wv .grid{grid-template-columns:minmax(0,1fr)}}
+.wv .code-big{font-family:var(--vscode-editor-font-family);font-size:30px;font-weight:600;letter-spacing:.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wv .lbl{font-size:12px;color:var(--vscode-descriptionForeground);text-transform:uppercase;letter-spacing:.04em}
+.wv .desc{color:var(--vscode-descriptionForeground);font-size:12px}
+.wv .state{padding:10px 12px;border-left:3px solid var(--vscode-focusBorder);background:var(--vscode-editorWidget-background)}
+.wv .state.warn{border-left-color:var(--vscode-statusBarItem-warningBackground)}
+.wv .btns{display:flex;gap:8px;flex-wrap:wrap}
+.qr{width:150px;height:150px;background:#fff;padding:8px;border-radius:4px}
+.api{margin-top:12px;font-size:13px;color:var(--ink2);display:flex;flex-direction:column;gap:4px}
+.api code{font-family:var(--font-mono);font-size:12.5px;color:var(--ink)}
+.simbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-set" viewBox="0 0 24 24"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.6-1.8"/></symbol>
+  <symbol id="i-fp" viewBox="0 0 24 24"><path d="M5 9.5a7.5 7.5 0 0 1 14 0M7.5 12a4.5 4.5 0 0 1 9 0v1.5M12 12v4.5c0 1.5-.4 3-1.2 4.2M9.2 20.2C9.8 19 10 17.6 10 16v-3.5M14.5 20.5c.4-1.2.6-2.6.6-4.2M17.8 17.5c.3-1 .4-2.1.4-3.2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></symbol>
+  <symbol id="i-pc" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-5 17-3-7z"/><path d="M12 14l8-10"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM14 18v2M18 14h2"/></symbol>
+  <symbol id="i-wifioff" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.5a10 10 0 0 1 4-2.2M19 12.5a10 10 0 0 0-2.8-1.9M2 8.8a15 15 0 0 1 4.2-2.6M22 8.8A15 15 0 0 0 11 4.6M12 20h.01"/></symbol>
+  <symbol id="i-cloudoff" viewBox="0 0 24 24"><path d="M3 3l18 18M7 18h10M20.4 15.6A4 4 0 0 0 17 10h-.6A6 6 0 0 0 9.2 6.3M6.2 9.4A4.5 4.5 0 0 0 7 18"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 5h.01M12 12h.01M12 19h.01" stroke-width="3"/></symbol>
+  <symbol id="i-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
+  <symbol id="i-hist" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4M12 8v4l3 2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+  <symbol id="i-prompt" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M12 18h7"/></symbol>
+  <symbol id="i-term" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></symbol>
+  <symbol id="i-files" viewBox="0 0 24 24"><path d="M8 3h8l4 4v12H8zM4 7v14h12"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 8v8M18 10c0 4-6 3-10 7"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand">
+    <svg width="44" height="44" viewBox="0 0 112 112" aria-hidden="true"><rect width="112" height="112" rx="26" fill="#11141A"/><g transform="translate(24 22)"><path d="M32 4 L54 25 L32 49 L10 25 Z" fill="#F2A93B"/><path d="M23 19 L30 25.5 L23 32" stroke="#11141A" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 33 H41" stroke="#11141A" stroke-width="3.6" stroke-linecap="round"/><path d="M32 49 C29 53 36 56 32 62" stroke="#F2A93B" stroke-width="1.8" fill="none" stroke-linecap="round"/></g></svg>
+    <div>
+      <h1>pipa<span>&gt;_</span> <span id="protoHeading" style="font-family:var(--font-ui);font-weight:500;font-size:18px;letter-spacing:0;color:var(--ink2)"></span></h1>
+      <p id="protoNote"></p>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctl"><span id="lblLang"></span><div class="segp" role="group" id="grpLang"><button type="button" data-proto="lang:pt" id="bLangPt">PT</button><button type="button" data-proto="lang:en" id="bLangEn">EN</button></div></div>
+    <div class="ctl"><span id="lblTheme"></span><div class="segp" role="group" id="grpTheme"><button type="button" data-proto="theme:system" id="bThSys"></button><button type="button" data-proto="theme:light" id="bThLight"></button><button type="button" data-proto="theme:dark" id="bThDark"></button></div></div>
+    <div class="ctl"><label for="jump" id="lblJump"></label><select id="jump" class="jump"></select></div>
+    <button type="button" class="plain" data-proto="reset" id="bReset"></button>
+  </div>
+</header>
+
+<main class="stage">
+  <section class="col" aria-labelledby="hPhone">
+    <h2 id="hPhone"></h2>
+    <div class="phone"><div class="screen" id="phone"></div></div>
+  </section>
+  <section class="col" aria-labelledby="hVs">
+    <h2 id="hVs"></h2>
+    <div class="vsc" id="vsc"></div>
+    <div class="simbar"><button type="button" class="plain" data-act="simClaim" id="bSimClaim"></button><button type="button" class="plain" data-act="simAttn" id="bSimAttn"></button></div>
+    <div class="api" id="apiList"></div>
+  </section>
+</main>
+
+<script>
+const CAT = {"app.name":["Pipa","Pipa"],"app.tagline":["Seus terminais, de longe.","Your terminals, from afar."],"common.cancel":["Cancelar","Cancel"],"common.back":["Voltar","Back"],"common.close":["Fechar","Close"],"common.retry":["Tentar agora","Try now"],"common.settings":["Configurações","Settings"],"common.more":["Mais opções","More options"],"common.loading":["Carregando…","Loading…"],"common.now":["agora","just now"],"common.ago_min":["há {n} min","{n} min ago"],"common.ago_h":["há {n} h","{n} h ago"],"common.ago_d":["há {n} dias","{n} days ago"],"common.today_at":["hoje às {time}","today at {time}"],"common.open_android_settings":["Abrir configurações do Android","Open Android settings"],"common.done":["Concluir","Done"],"welcome.title":["Seus terminais do VS Code, no celular.","Your VS Code terminals, on your phone."],"welcome.body":["Acompanhe builds, testes e o Claude Code de longe. Tudo começa em modo só leitura; para digitar, você libera com biometria.","Follow builds, tests and Claude Code from afar. Everything starts read-only; to type, you unlock with biometrics."],"welcome.steps_title":["Três passos, uma vez só","Three steps, once"],"welcome.step1":["Instale a extensão Pipa no VS Code.","Install the Pipa extension in VS Code."],"welcome.step2":["No VS Code, rode o comando Pipa: Conectar celular.","In VS Code, run the command Pipa: Connect phone."],"welcome.step3":["Leia o QR ou digite aqui o código de 12 dígitos.","Scan the QR or type the 12-digit code here."],"welcome.cta":["Adicionar computador","Add computer"],"welcome.security_link":["Como a Pipa protege seus terminais","How Pipa protects your terminals"],"welcome.security_title":["Segurança","Security"],"welcome.security_1":["O conteúdo vai cifrado do PC ao celular. A ponte só repassa bytes e não consegue ler nada.","Content travels encrypted from PC to phone. The bridge only relays bytes and cannot read anything."],"welcome.security_2":["Nada da tela fica gravado no celular.","Nothing from the screen is stored on the phone."],"welcome.security_3":["No PC, você confirma cada celular novo e pode cortar o acesso a qualquer momento.","On the PC, you confirm every new phone and can cut access at any time."],"welcome.security_4":["Digitar num terminal exige liberar a escrita com biometria, por alguns minutos.","Typing into a terminal requires unlocking writing with biometrics, for a few minutes."],"add.title":["Adicionar computador","Add computer"],"add.tab_qr":["Ler QR","Scan QR"],"add.tab_code":["Digitar código","Type code"],"add.qr_hint":["Aponte para o QR do painel Conectar celular, no VS Code.","Point at the QR in the Connect phone panel in VS Code."],"add.qr_camera_a11y":["Visor da câmera. Procurando um QR da Pipa.","Camera viewfinder. Looking for a Pipa QR."],"add.qr_camera_denied":["Sem acesso à câmera. Digite o código ou permita a câmera nas configurações do Android.","No camera access. Type the code or allow the camera in Android settings."],"add.code_label":["Código de 12 dígitos","12-digit code"],"add.code_help":["Aparece no VS Code, em Pipa: Conectar celular. Vale 5 minutos e serve uma vez.","Shown in VS Code, under Pipa: Connect phone. Valid for 5 minutes, single use."],"add.code_missing":["Faltam {n} dígitos.","{n} digits to go."],"add.code_complete":["Código completo.","Code complete."],"add.name_label":["Nome deste celular","Name of this phone"],"add.name_help":["É assim que o PC vai chamar este aparelho.","This is how the PC will call this device."],"add.bridge_label":["Ponte","Bridge"],"add.bridge_change":["Alterar","Change"],"add.bridge_help":["O QR já traz a ponte. Ao digitar o código, a Pipa usa esta.","The QR already carries the bridge. When you type the code, Pipa uses this one."],"add.submit":["Conectar","Connect"],"pair.connecting":["Conectando pela ponte…","Connecting through the bridge…"],"pair.verify_title":["Confira no PC","Check on the PC"],"pair.verify_body":["O VS Code em {pc} está mostrando um código de confirmação. Ele tem que ser igual a este:","VS Code on {pc} is showing a confirmation code. It must match this one:"],"pair.verify_code_a11y":["Código de confirmação: {code}","Confirmation code: {code}"],"pair.verify_wait":["Aguardando você tocar em Permitir no PC…","Waiting for you to click Allow on the PC…"],"pair.verify_mismatch_hint":["Os códigos são diferentes? Clique em Recusar no PC e cancele aqui.","Codes don't match? Click Deny on the PC and cancel here."],"pair.success_title":["{pc} adicionado","{pc} added"],"pair.success_body":["Este celular vê os terminais do perfil Terminal remoto, em modo só leitura. Para digitar num terminal, libere a escrita com biometria.","This phone sees the terminals of the Remote terminal profile, read-only. To type into a terminal, unlock writing with biometrics."],"pair.success_cta":["Ver terminais","View terminals"],"pair.err_expired_title":["Código expirado","Code expired"],"pair.err_expired_body":["O código vale 5 minutos. No VS Code, gere um novo em Pipa: Conectar celular.","The code is valid for 5 minutes. In VS Code, generate a new one with Pipa: Connect phone."],"pair.err_wrong_title":["O código não confere","The code doesn't match"],"pair.err_wrong_body":["Por segurança, esse código foi invalidado depois de uma tentativa. Gere um novo no VS Code e digite de novo.","For security, that code was invalidated after one attempt. Generate a new one in VS Code and type it again."],"pair.err_rejected_title":["Recusado no PC","Denied on the PC"],"pair.err_rejected_body":["Alguém clicou em Recusar em {pc}. Se foi engano, gere um novo código e tente de novo.","Someone clicked Deny on {pc}. If it was a mistake, generate a new code and try again."],"pair.err_timeout_title":["O PC não respondeu","The PC didn't answer"],"pair.err_timeout_body":["Ninguém confirmou em {pc} em 2 minutos. Gere um novo código quando estiver perto do PC.","Nobody confirmed on {pc} within 2 minutes. Generate a new code when you are near the PC."],"pair.err_bridge_title":["Ponte fora do ar","Bridge unreachable"],"pair.err_bridge_body":["Não foi possível falar com {bridge}. Confira a internet do celular ou o endereço da ponte.","Couldn't reach {bridge}. Check the phone's internet or the bridge address."],"pair.new_code":["Digitar outro código","Type another code"],"pair.check_bridge":["Conferir ponte","Check bridge"],"pcs.title":["Computadores","Computers"],"pcs.add":["Adicionar computador","Add computer"],"pcs.online":["online","online"],"pcs.offline_since":["offline desde {time}","offline since {time}"],"pcs.connecting":["conectando…","connecting…"],"pcs.terminals_one":["1 terminal","1 terminal"],"pcs.terminals_other":["{n} terminais","{n} terminals"],"pcs.attn_one":["1 pede atenção","1 needs attention"],"pcs.attn_other":["{n} pedem atenção","{n} need attention"],"pcs.offline_hint":["Pode estar dormindo ou desligado.","It may be asleep or turned off."],"pcs.cut":["acesso cortado no PC","access cut on the PC"],"pcs.item_a11y":["{pc}, {status}. Abrir terminais.","{pc}, {status}. Open terminals."],"sessions.title":["Terminais","Terminals"],"sessions.readonly_note":["Todo terminal começa só leitura.","Every terminal starts read-only."],"sessions.empty_title":["Nenhum terminal aberto","No open terminals"],"sessions.empty_body":["Abra um terminal no VS Code: ele já nasce no perfil Terminal remoto e aparece aqui.","Open a terminal in VS Code: it starts in the Remote terminal profile and shows up here."],"sessions.attn_banner_one":["1 pedido esperando sua resposta","1 request waiting for your answer"],"sessions.attn_banner_other":["{n} pedidos esperando sua resposta","{n} requests waiting for your answer"],"sessions.attn_banner_cta":["Responder","Answer"],"sessions.section_active":["Abertos","Open"],"sessions.section_ended":["Encerrados","Ended"],"sessions.armed_chip":["escrita · {time}","writing · {time}"],"sessions.armed_chip_a11y":["Escrita liberada, termina em {time}","Writing unlocked, ends in {time}"],"status.starting":["iniciando","starting"],"status.prompt":["pronto","ready"],"status.running":["rodando","running"],"status.waiting":["aguardando você","waiting for you"],"status.waiting_permission":["aguardando permissão","waiting for permission"],"status.exited_ok":["terminou · exit 0","finished · exit 0"],"status.exited_err":["falhou · exit {exit}","failed · exit {exit}"],"status.killed":["encerrado","terminated"],"status.lost":["perdido","lost"],"ctx.heuristic":["detectado pela tela","detected from screen"],"ctx.claude_tool":["Claude Code · {tool}","Claude Code · {tool}"],"ctx.last_cmd":["último: {cmd}","last: {cmd}"],"ctx.running_cmd":["executando: {cmd}","running: {cmd}"],"ctx.ended_at":["às {time}","at {time}"],"sessions.item_a11y":["Terminal {session}, {status}. {context}","Terminal {session}, {status}. {context}"],"session.readonly_bar":["Só leitura","Read-only"],"session.readonly_hint":["Você vê a tela. Para digitar, libere a escrita.","You can see the screen. To type, unlock writing."],"session.arm_cta":["Liberar escrita","Unlock writing"],"session.armed_bar":["Escrita liberada · {time}","Writing unlocked · {time}"],"session.armed_hint":["O PC mostra que este celular está no controle.","The PC shows that this phone is in control."],"session.disarm":["Bloquear","Lock"],"session.size_desktop":["{cols}×{rows} (VS Code)","{cols}×{rows} (VS Code)"],"session.history_load":["Carregar 200 linhas anteriores","Load 200 earlier lines"],"session.history_loading":["Carregando histórico…","Loading history…"],"session.history_start":["Início do histórico guardado no PC.","Start of the history kept on the PC."],"session.live":["Voltar ao vivo","Back to live"],"session.terminal_a11y":["Tela do terminal {session}, {n} linhas visíveis","Terminal {session} screen, {n} visible lines"],"session.input_label":["Texto para {session}","Text for {session}"],"session.input_placeholder_ro":["Libere a escrita para digitar","Unlock writing to type"],"session.input_placeholder":["Digite e toque em Enviar","Type and tap Send"],"session.send":["Enviar","Send"],"session.send_a11y":["Enviar texto e Enter para {session}","Send text and Enter to {session}"],"session.send_enter_note":["Enviar manda o texto e um Enter.","Send types the text and presses Enter."],"session.send_disabled_reason":["Para enviar, libere a escrita.","To send, unlock writing."],"session.sending":["Enviando…","Sending…"],"session.sent":["Enviado.","Sent."],"session.err_stale":["A tela mudou antes do envio. Nada foi enviado. Confira e envie de novo.","The screen changed before sending. Nothing was sent. Check it and send again."],"session.err_uncertain":["A conexão caiu durante o envio. Conferindo no PC se chegou…","The connection dropped while sending. Checking with the PC whether it arrived…"],"session.uncertain_ok":["Chegou ao PC.","It reached the PC."],"session.uncertain_no":["Não chegou ao PC. Seu texto continua aqui.","It didn't reach the PC. Your text is still here."],"session.err_not_armed":["A escrita expirou. Libere de novo para enviar. Seu texto continua aqui.","Writing expired. Unlock again to send. Your text is still here."],"session.err_too_large":["Texto grande demais: o limite é 4 KB por envio.","Text too long: the limit is 4 KB per send."],"session.exited_banner":["Terminal encerrado · exit {exit} · {time}","Terminal ended · exit {exit} · {time}"],"session.lost_banner":["Terminal perdido: o agente do PC reiniciou às {time}.","Terminal lost: the PC agent restarted at {time}."],"session.menu_terminate":["Encerrar terminal…","End terminal…"],"session.attn_pinned":["Claude pede permissão · {cmd}","Claude asks permission · {cmd}"],"session.attn_view":["Ver pedido","View request"],"keys.bar_label":["Teclas especiais","Special keys"],"keys.esc":["Esc","Esc"],"keys.tab":["Tab","Tab"],"keys.ctrlc":["Ctrl+C","Ctrl+C"],"keys.enter":["Enter","Enter"],"keys.esc_a11y":["Enviar Esc","Send Esc"],"keys.tab_a11y":["Enviar Tab","Send Tab"],"keys.up_a11y":["Enviar seta para cima","Send up arrow"],"keys.down_a11y":["Enviar seta para baixo","Send down arrow"],"keys.left_a11y":["Enviar seta para a esquerda","Send left arrow"],"keys.right_a11y":["Enviar seta para a direita","Send right arrow"],"keys.ctrlc_a11y":["Enviar Ctrl+C, interromper","Send Ctrl+C, interrupt"],"keys.enter_a11y":["Enviar Enter","Send Enter"],"terminate.title":["Encerrar {session}?","End {session}?"],"terminate.body":["O processo em {pc} recebe um sinal de interrupção. Se não parar em 5 s, é finalizado. Isso não pode ser desfeito.","The process on {pc} gets an interrupt signal. If it doesn't stop within 5 s, it is killed. This can't be undone."],"terminate.cta":["Encerrar com biometria","End with biometrics"],"arm.title":["Liberar escrita em {session}","Unlock writing in {session}"],"arm.body":["Por esse tempo, este celular pode digitar neste terminal. Os outros continuam só leitura. O PC mostra que você está no controle.","For this long, this phone can type into this terminal. The others stay read-only. The PC shows that you are in control."],"arm.duration":["Por quanto tempo","For how long"],"arm.min":["{n} min","{n} min"],"arm.cta":["Liberar com biometria","Unlock with biometrics"],"arm.bio_title":["Liberar escrita","Unlock writing"],"arm.bio_subtitle":["{session} em {pc} · {n} min","{session} on {pc} · {n} min"],"arm.bio_hint":["Toque no sensor de impressão digital","Touch the fingerprint sensor"],"arm.bio_use_pin":["Usar PIN","Use PIN"],"arm.no_biometric":["Configure uma biometria ou um bloqueio de tela no Android para liberar a escrita.","Set up biometrics or a screen lock on Android to unlock writing."],"arm.policy_off":["A escrita remota está desativada em {pc}. Só dá para ativar no VS Code.","Remote writing is turned off on {pc}. It can only be turned on in VS Code."],"arm.policy_max":["{pc} permite no máximo {n} min.","{pc} allows at most {n} min."],"arm.expiring":["A escrita termina em 30 s.","Writing ends in 30 s."],"arm.extend":["Estender","Extend"],"arm.expired":["Escrita bloqueada de novo.","Writing locked again."],"arm.disarmed_by_pc":["A escrita foi retirada no PC.","Writing was revoked on the PC."],"arm.done":["Escrita liberada por {n} min.","Writing unlocked for {n} min."],"attn.title_permission":["Claude pede permissão","Claude asks permission"],"attn.title_question":["Claude tem uma pergunta","Claude has a question"],"attn.title_idle":["Claude terminou e espera instrução","Claude finished and waits for instructions"],"attn.title_finished":["{session} terminou","{session} finished"],"attn.title_error":["{session} falhou","{session} failed"],"attn.run_command":["Para executar o comando:","To run the command:"],"attn.edit_file":["Para editar o arquivo:","To edit the file:"],"attn.where":["{session} · {pc} · {path}","{session} · {pc} · {path}"],"attn.source_adapter":["Informado pelo Claude Code","Reported by Claude Code"],"attn.source_heuristic":["Detectado pela tela. Confira o terminal antes de responder.","Detected from the screen. Check the terminal before answering."],"attn.destructive_note":["O PC marcou este pedido como destrutivo. Permitir exige biometria.","The PC marked this request as destructive. Allowing requires biometrics."],"attn.need_bio_note":["A escrita não está liberada neste terminal: permitir pede biometria.","Writing isn't unlocked in this terminal: allowing asks for biometrics."],"attn.allow":["Permitir","Allow"],"attn.allow_bio":["Permitir com biometria","Allow with biometrics"],"attn.deny":["Recusar","Deny"],"attn.bio_title":["Confirmar permissão","Confirm permission"],"attn.bio_subtitle":["{cmd} em {session}","{cmd} in {session}"],"attn.sending":["Enviando resposta…","Sending answer…"],"attn.done_allowed":["Permitido. O Claude continuou.","Allowed. Claude continued."],"attn.done_denied":["Recusado. O Claude foi avisado.","Denied. Claude was told."],"attn.stale_pc":["Já respondido no PC às {time}.","Already answered on the PC at {time}."],"attn.stale_other":["Já respondido por {device} às {time}.","Already answered by {device} at {time}."],"attn.expired":["O Claude parou de esperar às {time}. Veja o terminal para saber o que aconteceu.","Claude stopped waiting at {time}. Check the terminal to see what happened."],"attn.session_ended":["O terminal terminou antes da resposta.","The terminal ended before the answer."],"attn.open_terminal":["Abrir terminal","Open terminal"],"attn.age_s":["há {n} s","{n} s ago"],"attn.counter":["{i} de {n}","{i} of {n}"],"attn.next":["Próximo pedido","Next request"],"devices.title":["Aparelhos e segurança","Devices and security"],"devices.this_phone":["Este celular","This phone"],"devices.key_strongbox":["Chave guardada no chip de segurança (StrongBox).","Key stored in the security chip (StrongBox)."],"devices.key_tee":["Chave guardada no ambiente seguro do Android (TEE).","Key stored in Android's secure environment (TEE)."],"devices.paired_on":["Pareado com {pc} em {date}","Paired with {pc} on {date}"],"devices.on_pc":["Aparelhos com acesso a {pc}","Devices with access to {pc}"],"devices.you":["este celular","this phone"],"devices.connected_now":["conectado agora","connected now"],"devices.last_seen":["visto {when}","seen {when}"],"devices.revoke_on_pc":["Para revogar outro aparelho, use o VS Code em {pc}.","To revoke another device, use VS Code on {pc}."],"devices.remove_pc":["Remover {pc} deste celular","Remove {pc} from this phone"],"devices.remove_confirm_title":["Remover {pc}?","Remove {pc}?"],"devices.remove_confirm_body":["Este celular perde o acesso agora e o PC registra a remoção. Para voltar, você vai precisar de um novo código no VS Code.","This phone loses access now and the PC records the removal. To come back, you'll need a new code from VS Code."],"devices.remove_confirm_cta":["Remover {pc}","Remove {pc}"],"devices.audit_title":["Atividade recente deste celular","Recent activity from this phone"],"devices.audit_note":["O registro completo fica no PC por 90 dias. O texto digitado não é registrado, só a quantidade de caracteres.","The full log stays on the PC for 90 days. Typed text isn't logged, only the character count."],"devices.audit_empty":["Nada registrado ainda.","Nothing logged yet."],"audit.connected":["Conectou","Connected"],"audit.armed":["Liberou escrita em {session} por {n} min","Unlocked writing in {session} for {n} min"],"audit.input":["Enviou {n} caracteres para {session}","Sent {n} characters to {session}"],"audit.keys":["Enviou {keys} para {session}","Sent {keys} to {session}"],"audit.attn_allow":["Permitiu um pedido em {session}","Allowed a request in {session}"],"audit.attn_deny":["Recusou um pedido em {session}","Denied a request in {session}"],"audit.disarmed":["Bloqueou a escrita em {session}","Locked writing in {session}"],"devices.screenshot_block":["Bloquear capturas de tela","Block screenshots"],"devices.screenshot_block_help":["Impede prints e esconde a prévia na lista de apps recentes.","Prevents screenshots and hides the preview in recent apps."],"devices.app_lock":["Pedir biometria ao abrir a Pipa","Ask for biometrics when opening Pipa"],"devices.app_lock_help":["Além da biometria para escrever, que é sempre exigida.","In addition to biometrics for writing, which is always required."],"settings.title":["Configurações","Settings"],"settings.bridge":["Ponte","Bridge"],"settings.bridge_ok":["alcançável · {ms} ms","reachable · {ms} ms"],"settings.bridge_err":["sem resposta","no response"],"settings.bridge_help":["Servidor que junta o PC e o celular. Ele só vê bytes cifrados.","Server that connects the PC and the phone. It only sees encrypted bytes."],"settings.language":["Idioma","Language"],"settings.lang_system":["Igual ao sistema","Same as system"],"settings.lang_pt":["Português (Brasil)","Português (Brasil)"],"settings.lang_en":["English","English"],"settings.theme":["Tema","Theme"],"settings.theme_system":["Igual ao sistema","Same as system"],"settings.theme_light":["Claro","Light"],"settings.theme_dark":["Escuro","Dark"],"settings.notifications":["Notificações","Notifications"],"settings.notifications_help":["Os avisos dizem só qual PC pede atenção. Nada do terminal aparece na notificação.","Alerts only say which PC needs attention. Nothing from the terminal appears in the notification."],"settings.security":["Aparelhos e segurança","Devices and security"],"settings.about":["Sobre","About"],"settings.version":["Versão {v} · protocolo trcp.v1","Version {v} · protocol trcp.v1"],"global.no_network":["Sem internet. Nada novo chega até a conexão voltar.","No internet. Nothing new arrives until the connection is back."],"global.pc_offline":["{pc} está offline desde {time}. Pode estar dormindo ou desligado.","{pc} has been offline since {time}. It may be asleep or turned off."],"global.pc_offline_empty":["Os terminais aparecem quando o PC voltar.","Terminals show up when the PC is back."],"global.bridge_down":["Não foi possível falar com a ponte {bridge}.","Couldn't reach the bridge {bridge}."],"global.reconnecting":["Reconectando… tentativa {n}","Reconnecting… attempt {n}"],"global.revoked_title":["Este celular foi removido de {pc}","This phone was removed from {pc}"],"global.revoked_body":["O acesso foi revogado no PC às {time}. Para voltar, gere um novo código no VS Code.","Access was revoked on the PC at {time}. To come back, generate a new code in VS Code."],"global.revoked_readd":["Adicionar de novo","Add again"],"global.revoked_forget":["Tirar da lista","Remove from list"],"global.cut_title":["Acesso remoto cortado em {pc}","Remote access cut on {pc}"],"global.cut_body":["Ninguém vê nem controla os terminais pelo celular. Só quem está no PC pode reativar.","Nobody can see or control the terminals from a phone. Only someone at the PC can turn it back on."],"global.outdated":["Atualize a Pipa: {pc} usa uma versão mais nova do protocolo.","Update Pipa: {pc} uses a newer protocol version."],"global.outdated_cta":["Abrir a loja","Open store"],"notif.channel_attn":["Pedidos de atenção","Attention requests"],"notif.channel_attn_desc":["Quando um terminal espera sua resposta. Sem conteúdo do terminal.","When a terminal waits for your answer. No terminal content."],"notif.title":["Pipa","Pipa"],"notif.attn":["Algo pede sua atenção em {pc}","Something needs your attention on {pc}"],"notif.attn_many":["{n} pedidos de atenção em {pc}","{n} attention requests on {pc}"],"notif.attn_unknown":["Algo pede sua atenção num computador","Something needs your attention on a computer"],"notif.lock_screen":["Tela de bloqueio","Lock screen"],"vsc.cmd_category":["Pipa","Pipa"],"vsc.status_on":["Pipa","Pipa"],"vsc.status_phones_one":["Pipa · 1 celular","Pipa · 1 phone"],"vsc.status_phones_other":["Pipa · {n} celulares","Pipa · {n} phones"],"vsc.status_tooltip":["Agente ligado · {n} celular(es) conectado(s). Clique para ver as opções.","Agent running · {n} phone(s) connected. Click for options."],"vsc.status_armed":["{device} no controle","{device} in control"],"vsc.status_armed_tooltip":["{device} pode digitar em {session} até {time}. Clique para retirar a escrita.","{device} can type in {session} until {time}. Click to revoke writing."],"vsc.status_cut":["Acesso remoto cortado","Remote access cut"],"vsc.status_cut_tooltip":["Nenhum celular vê ou controla os terminais. Clique para reativar.","No phone can see or control the terminals. Click to turn it back on."],"vsc.status_agent_off":["Pipa parada","Pipa stopped"],"vsc.status_agent_off_tooltip":["O agente da Pipa não está rodando, e os terminais do perfil Terminal remoto não abrem. Clique para iniciar.","The Pipa agent isn't running, so Remote terminal profile terminals don't open. Click to start it."],"vsc.status_pending":["Confirmar {device}","Confirm {device}"],"vsc.menu_placeholder":["Pipa: o que você quer fazer?","Pipa: what do you want to do?"],"vsc.cmd_pair":["Conectar celular","Connect phone"],"vsc.cmd_devices":["Mostrar aparelhos","Show devices"],"vsc.cmd_cut":["Cortar acesso remoto","Cut remote access"],"vsc.cmd_cut_detail":["Desconecta todos os celulares agora e recusa novas conexões.","Disconnects every phone now and refuses new connections."],"vsc.cmd_restore":["Reativar acesso remoto","Turn remote access back on"],"vsc.cmd_disarm":["Retirar escrita de {device}","Revoke writing from {device}"],"vsc.cmd_settings":["Abrir configurações da Pipa","Open Pipa settings"],"vsc.cmd_start":["Iniciar agente","Start agent"],"vsc.term_profile":["Terminal remoto (Pipa)","Remote terminal (Pipa)"],"vsc.term_name_armed":["{name} · {device} no controle","{name} · {device} in control"],"vsc.pair_title":["Conectar celular","Connect phone"],"vsc.pair_step1":["Abra a Pipa no celular e toque em Adicionar computador.","Open Pipa on the phone and tap Add computer."],"vsc.pair_step2":["Leia o QR ou digite o código.","Scan the QR or type the code."],"vsc.pair_step3":["Confira o código de confirmação e responda aqui no VS Code.","Check the confirmation code and answer here in VS Code."],"vsc.pair_code_label":["Código","Code"],"vsc.pair_valid":["Vale por {time} · uso único","Valid for {time} · single use"],"vsc.pair_qr_alt":["QR com o código e o endereço da ponte","QR with the code and the bridge address"],"vsc.pair_hide":["Ocultar código","Hide code"],"vsc.pair_show":["Mostrar código","Show code"],"vsc.pair_hidden_note":["Código oculto. Útil ao compartilhar a tela.","Code hidden. Useful when sharing your screen."],"vsc.pair_waiting":["Aguardando o celular…","Waiting for the phone…"],"vsc.pair_confirming":["{device} leu o código. Confira o código de confirmação e responda na janela que abriu.","{device} read the code. Check the confirmation code and answer in the dialog that opened."],"vsc.pair_success":["{device} conectado. Pode fechar este painel.","{device} connected. You can close this panel."],"vsc.pair_expired":["O código expirou.","The code expired."],"vsc.pair_new":["Gerar novo código","Generate new code"],"vsc.pair_wrong":["Alguém digitou um código errado. Este código foi invalidado por segurança.","Someone typed a wrong code. This code was invalidated for security."],"vsc.pair_rejected":["Você recusou {device}.","You denied {device}."],"vsc.pair_bridge_down":["Não foi possível falar com a ponte {bridge}. Confira a internet ou o endereço da ponte nas configurações.","Couldn't reach the bridge {bridge}. Check the internet or the bridge address in settings."],"vsc.pair_bridge":["Ponte: {bridge}","Bridge: {bridge}"],"vsc.allow_title":["Permitir “{device}” neste computador?","Allow “{device}” on this computer?"],"vsc.allow_detail":["Código de confirmação: {code}. Confira se o celular mostra o mesmo código.\n\n{device} vai ver todos os terminais do perfil Terminal remoto, em modo só leitura. Para digitar, o celular precisa liberar a escrita com biometria.","Confirmation code: {code}. Check that the phone shows the same code.\n\n{device} will see every terminal opened with the Remote terminal profile, read-only. To type, the phone must enable writing with biometrics."],"vsc.allow_yes":["Permitir","Allow"],"vsc.allow_no":["Recusar","Deny"],"vsc.tree_title":["Pipa","Pipa"],"vsc.tree_this_pc":["Este computador · {pc}","This computer · {pc}"],"vsc.tree_agent_on":["agente ligado","agent running"],"vsc.tree_devices":["Aparelhos","Devices"],"vsc.tree_device_connected":["conectado agora","connected now"],"vsc.tree_device_seen":["visto {when}","seen {when}"],"vsc.tree_revoke":["Revogar acesso","Revoke access"],"vsc.tree_sessions":["Terminais remotos","Remote terminals"],"vsc.tree_session_ro":["só leitura","read-only"],"vsc.tree_session_armed":["{device} no controle até {time}","{device} in control until {time}"],"vsc.tree_activity":["Atividade recente","Recent activity"],"vsc.tree_welcome_text":["Nenhum celular conectado ainda.","No phone connected yet."],"vsc.revoke_title":["Revogar “{device}”?","Revoke “{device}”?"],"vsc.revoke_detail":["Ele perde o acesso agora, mesmo se estiver conectado. Para voltar, vai precisar de um novo código.","It loses access now, even if connected. To come back, it will need a new code."],"vsc.revoke_yes":["Revogar","Revoke"],"vsc.revoked_toast":["{device} não tem mais acesso.","{device} no longer has access."],"vsc.cut_toast":["Acesso remoto cortado. Nenhum celular vê ou controla os terminais.","Remote access cut. No phone can see or control the terminals."],"vsc.restore":["Reativar","Turn back on"],"vsc.restored_toast":["Acesso remoto reativado.","Remote access turned back on."],"vsc.armed_toast":["{device} liberou a escrita em “{session}” por {n} min.","{device} unlocked writing in “{session}” for {n} min."],"vsc.armed_toast_action":["Retirar escrita","Revoke writing"],"vsc.disarmed_toast":["Escrita retirada de {device}.","Writing revoked from {device}."],"vsc.set_bridge":["Endereço da ponte usada para parear e conectar celulares.","Address of the bridge used to pair and connect phones."],"vsc.set_write":["Permitir que celulares liberem a escrita (sempre com biometria).","Allow phones to unlock writing (always with biometrics)."],"vsc.set_arm_max":["Tempo máximo de escrita liberada, em minutos.","Maximum time writing stays unlocked, in minutes."],"vsc.set_default_profile":["Usar o perfil Terminal remoto como padrão nos novos terminais.","Use the Remote terminal profile as the default for new terminals."],"vsc.set_notify_arm":["Avisar quando um celular liberar a escrita.","Notify when a phone unlocks writing."],"vsc.set_audit_input":["Registrar no log de auditoria o texto enviado pelos celulares. Desligado: só a quantidade de caracteres.","Log the text sent by phones in the audit log. Off: only the character count."],"proto.heading":["Protótipo de interface","Interface prototype"],"proto.note":["Descartável, com dados fictícios. Toque nos elementos do celular e do VS Code para navegar; o seletor abaixo pula para qualquer tela ou estado.","Throwaway, with fake data. Tap elements on the phone and in VS Code to navigate; the picker below jumps to any screen or state."],"proto.lang":["Idioma","Language"],"proto.theme":["Tema","Theme"],"proto.theme_system":["Sistema","System"],"proto.theme_light":["Claro","Light"],"proto.theme_dark":["Escuro","Dark"],"proto.jump":["Ir para","Jump to"],"proto.reset":["Recomeçar","Start over"],"proto.phone":["Celular Android","Android phone"],"proto.vscode":["VS Code (simulação da UI nativa, herda o tema do editor)","VS Code (mock of the native UI, inherits the editor theme)"],"proto.vs_state":["Estado do PC","PC state"],"proto.sim_claim":["Simular: celular leu o código","Simulate: phone read the code"],"proto.sim_attn":["Simular: Claude pede permissão","Simulate: Claude asks permission"],"proto.api":["API","API"],"proto.group_first":["Primeiro uso","First use"],"proto.group_daily":["Uso diário","Daily use"],"proto.group_attn":["Atenção","Attention"],"proto.group_security":["Segurança e ajustes","Security and settings"],"proto.group_global":["Estados globais","Global states"],"proto.group_vscode":["VS Code","VS Code"],"proto.fake_qr":["QR ilustrativo","Illustrative QR"],"proto.p_welcome":["Boas-vindas","Welcome"],"proto.p_security":["Como a Pipa protege","How Pipa keeps you safe"],"proto.p_add_qr":["Adicionar: ler QR","Add: scan QR"],"proto.p_add_qr_denied":["Adicionar: câmera negada","Add: camera denied"],"proto.p_add_code":["Adicionar: digitar código","Add: type code"],"proto.p_add_code_full":["Adicionar: código completo","Add: code complete"],"proto.p_pair_connecting":["Pareamento: conectando","Pairing: connecting"],"proto.p_pair_verify":["Pareamento: confira no PC + modal","Pairing: check on PC + modal"],"proto.p_pair_success":["Pareamento: concluído","Pairing: done"],"proto.p_err_expired":["Erro: código expirado","Error: code expired"],"proto.p_err_wrong":["Erro: código errado","Error: wrong code"],"proto.p_err_rejected":["Erro: recusado no PC","Error: rejected on PC"],"proto.p_err_timeout":["Erro: PC não confirmou a tempo","Error: PC did not confirm in time"],"proto.p_err_bridge":["Erro: ponte fora do ar","Error: bridge down"],"proto.p_pcs":["Computadores","Computers"],"proto.p_sessions":["Terminais do LUCAS-PC","LUCAS-PC terminals"],"proto.p_sessions_empty":["Terminais: nenhum aberto","Terminals: none open"],"proto.p_session_ro":["Terminal: só leitura","Terminal: read-only"],"proto.p_session_armed":["Terminal: escrita liberada","Terminal: write enabled"],"proto.p_session_history":["Terminal: histórico carregado","Terminal: history loaded"],"proto.p_session_stale":["Terminal: tela mudou antes do envio","Terminal: screen changed before sending"],"proto.p_session_uncertain":["Terminal: envio incerto","Terminal: delivery uncertain"],"proto.p_session_expiring":["Terminal: escrita acabando","Terminal: write ending"],"proto.p_session_exited":["Terminal: encerrado com erro","Terminal: ended with error"],"proto.p_session_lost":["Terminal: perdido","Terminal: lost"],"proto.p_arm":["Liberar escrita: escolher tempo","Enable write: pick duration"],"proto.p_arm_bio":["Liberar escrita: biometria","Enable write: biometrics"],"proto.p_arm_nobio":["Liberar escrita: sem biometria","Enable write: no biometrics"],"proto.p_arm_policy":["Liberar escrita: bloqueada no PC","Enable write: blocked on PC"],"proto.p_terminate":["Encerrar terminal","End terminal"],"proto.p_attn":["Pedido de permissão","Permission request"],"proto.p_attn_destructive":["Pedido destrutivo","Destructive request"],"proto.p_attn_heuristic":["Pedido detectado pela tela","Request detected from screen"],"proto.p_attn_stale":["Pedido já respondido no PC","Request already answered on PC"],"proto.p_attn_expired":["Pedido expirado","Request expired"],"proto.p_attn_done":["Pedido permitido","Request allowed"],"proto.p_notif":["Notificação na tela de bloqueio","Lock-screen notification"],"proto.p_devices":["Aparelhos e segurança","Devices and security"],"proto.p_remove_pc":["Remover computador","Remove computer"],"proto.p_settings":["Configurações","Settings"],"proto.p_no_network":["Sem internet","No internet"],"proto.p_pc_offline":["PC desligado ou dormindo","PC off or asleep"],"proto.p_bridge_down":["Ponte inalcançável","Bridge unreachable"],"proto.p_reconnecting":["Reconectando","Reconnecting"],"proto.p_revoked":["Aparelho revogado","Device revoked"],"proto.p_cut":["Acesso cortado no PC","Access cut on PC"],"proto.p_outdated":["Versões incompatíveis","Incompatible versions"],"proto.p_vs_normal":["VS Code: normal","VS Code: normal"],"proto.p_vs_pair":["VS Code: painel Conectar celular","VS Code: Connect phone panel"],"proto.p_vs_hidden":["VS Code: código oculto","VS Code: code hidden"],"proto.p_vs_modal":["VS Code: Permitir aparelho?","VS Code: Allow device?"],"proto.p_vs_pair_expired":["VS Code: código expirou","VS Code: code expired"],"proto.p_vs_pair_wrong":["VS Code: código errado","VS Code: wrong code"],"proto.p_vs_armed":["VS Code: celular no controle","VS Code: phone in control"],"proto.p_vs_menu":["VS Code: menu da barra de status","VS Code: status bar menu"],"proto.p_vs_tree":["VS Code: painel Pipa","VS Code: Pipa panel"],"proto.p_vs_revoke":["VS Code: revogar aparelho","VS Code: revoke device"],"proto.p_vs_cut":["VS Code: cortar acesso","VS Code: cut access"],"proto.p_vs_agent_off":["VS Code: agente parado","VS Code: agent stopped"]};
+const PC = 'LUCAS-PC', PC2 = 'NOTE-TRABALHO', BRIDGE = 'ponte.gariolilabs.com', CODE = '4821 · 9137 2055', SAS = '482 913';
+const S = {};
+function fresh(){ return {
+  lang:'pt', screen:'welcome', stack:[], overlay:null, addTab:'code', code:'', deviceName:'Pixel 8', pairErr:null, cameraDenied:false,
+  net:'ok', pc:'online', armed:{}, armMin:5, sid:'cc', draft:'', send:null, hist:0, histLoading:false, histEnd:false,
+  attn:'open', attnKind:'normal', attnSource:'adapter', emptySessions:false, ended:null, snack:null, heads:false,
+  noBio:false, policyOff:false, bioFor:null, outdated:false, sent:[], shots:true, appLock:false, settingsLang:'system', settingsTheme:'system',
+  vs:{mode:'normal', pair:false, pairState:'waiting', pairEnd:Date.now()+5*60000, hidden:false, modal:null, qp:false, toasts:[], tab:'terminal', active:'cc', editor:'code',
+      devices:[{id:'p8',name:'Pixel 8',state:'connected'},{id:'tab',name:'Galaxy Tab S9',state:'seen',when:3}], paired:true}
+}; }
+Object.assign(S, fresh());
+
+function t(key, v){ const e = CAT[key]; if(!e){ console.warn('texto ausente', key); return key; } let s = e[S.lang==='pt'?0:1]; if(v) s = s.replace(/\{(\w+)\}/g,(m,k)=> v[k]!==undefined ? v[k] : m); return s; }
+function h(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function T(key, v){ return h(t(key, v)).replace(/\n/g,'<br>'); }
+function ic(id, cls){ return `<svg class="i ${cls||''}" aria-hidden="true"><use href="#i-${id}"/></svg>`; }
+/* Marca: conceito A "Pipa". >= 20 px: glifo de 24 px (losango vazado + ">"), 1 cor; < 20 px: glifo de 16 px (losango cheio). */
+function kite(size, color){ const st=`style="color:${color||'currentColor'};flex:none"`;
+  return size>=20
+    ? `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true" ${st}><path d="M32 4 L54 25 L32 49 L10 25 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M24 19 L31 25.5 L24 32" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true" ${st}><path d="M32 4 L54 25 L32 49 L10 25 Z" fill="currentColor"/></svg>`; }
+function kiteColor(size){ return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true" style="flex:none"><path d="M32 4 L54 25 L32 49 L10 25 Z" fill="#F2A93B"/><path d="M32 4 V49 M10 25 H54" stroke="#11141A" stroke-width="1.2" opacity="0.35"/><path d="M23 19 L30 25.5 L23 32" stroke="#11141A" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 33 H41" stroke="#11141A" stroke-width="3.6" stroke-linecap="round"/><path d="M32 49 C29 53 36 56 32 62" stroke="var(--kite-tail)" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M28.5 53.5 L32 55 L28.5 56.8 Z M35.5 57.5 L32 59 L35.5 60.8 Z" fill="var(--kite-tail)"/></svg>`; }
+function appIcon(){ return `<span class="appicon"><svg width="36" height="36" viewBox="0 0 112 112" aria-hidden="true"><rect width="112" height="112" rx="26" fill="#11141A"/><g transform="translate(24 22)"><path d="M32 4 L54 25 L32 49 L10 25 Z" fill="#F2A93B"/><path d="M23 19 L30 25.5 L23 32" stroke="#11141A" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 33 H41" stroke="#11141A" stroke-width="4.5" stroke-linecap="round"/></g></svg></span>`; }
+function mmss(ms){ ms=Math.max(0,ms); const s=Math.ceil(ms/1000); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function clock(offMin){ const d=new Date(Date.now()+(offMin||0)*60000); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function armedLeft(sid){ const e=S.armed[sid]; return e ? e-Date.now() : 0; }
+function isArmed(sid){ return armedLeft(sid)>0; }
+
+const SESS = [
+  {id:'cc', name:'Claude Code', shell:'pwsh', cwd:'~/projetos/api'},
+  {id:'be', name:'Backend', shell:'pwsh', cwd:'~/projetos/api'},
+  {id:'fe', name:'Frontend', shell:'pwsh', cwd:'~/projetos/web'},
+  {id:'bd', name:'Build', shell:'pwsh', cwd:'~/projetos/motor'},
+];
+function sess(id){ return SESS.find(s=>s.id===id); }
+function attnCmd(){ return S.attnKind==='destructive' ? 'rm -rf dist' : 'npm run build'; }
+function attnOpen(){ return S.attn==='open' || S.attn==='sending'; }
+function status(id){
+  if(id==='cc'){ if(S.ended==='cc') return {k:'exited_ok',tone:'ok',icon:'check',label:t('status.exited_ok')};
+    return attnOpen() ? {k:'waiting_permission',tone:'attn',icon:'bell',label:t('status.waiting_permission')} : {k:'running',tone:'neutral',icon:'play',label:t('status.running')}; }
+  if(id==='be') return {k:'running',tone:'neutral',icon:'play',label:t('status.running')};
+  if(id==='fe') return {k:'prompt',tone:'neutral',icon:'prompt',label:t('status.prompt')};
+  if(id==='bd') return {k:'exited_err',tone:'danger',icon:'x',label:t('status.exited_err',{exit:1})};
+}
+function ctx(id){
+  if(id==='cc') return attnOpen() ? t('ctx.claude_tool',{tool:'Bash'})+' · '+attnCmd() : t('ctx.claude_tool',{tool:'Bash'});
+  if(id==='be') return t('ctx.running_cmd',{cmd:'npm run dev'});
+  if(id==='fe') return t('ctx.last_cmd',{cmd:'npm test'})+' · exit 0';
+  if(id==='bd') return t('ctx.last_cmd',{cmd:'cargo build --release'})+' · '+t('ctx.ended_at',{time:'14:21'});
+}
+function lines(id){
+  const P = (p)=>[[p,'t-blue'],];
+  const L = {
+    cc:[
+      [['PS C:\\projetos\\api> ','t-blue'],['claude','t-b']],
+      [['> ','t-dim'],['rode os testes e faça o build de produção','']],
+      [['']],
+      [['● ','t-green'],['Vou rodar os testes primeiro.','']],
+      [['● ','t-green'],['Bash','t-b'],['(npm test)','']],
+      [['  ⎿  ','t-dim'],['42 passed','t-green'],[', 0 failed (3.1s)','t-dim']],
+      [['● ','t-green'],['Testes ok. Agora o build.','']],
+      [['● ','t-yellow'],['Bash','t-b'],['('+attnCmd()+')','']],
+    ],
+    be:[
+      [['PS C:\\projetos\\api> ','t-blue'],['npm run dev','t-b']],
+      [['> api@2.3.0 dev','t-dim']],[['> tsx watch src/server.ts','t-dim']],
+      [['[14:02:11] ','t-dim'],['servidor ouvindo em :3000','t-green']],
+      [['[14:18:40] ','t-dim'],['GET /health 200 2ms','']],
+      [['[14:31:05] ','t-dim'],['POST /pedidos 201 48ms','']],
+    ],
+    fe:[
+      [['PS C:\\projetos\\web> ','t-blue'],['npm test','t-b']],
+      [[' ✓ ','t-green'],['src/carrinho.test.ts (12)','']],
+      [[' ✓ ','t-green'],['src/checkout.test.ts (9)','']],
+      [[' Test Files  ','t-dim'],['2 passed','t-green']],
+      [['PS C:\\projetos\\web> ','t-blue']],
+    ],
+    bd:[
+      [['PS C:\\projetos\\motor> ','t-blue'],['cargo build --release','t-b']],
+      [['   Compiling ','t-green t-b'],['motor v0.4.1','']],
+      [['error[E0308]','t-red t-b'],[': mismatched types','t-b']],
+      [['  --> ','t-blue'],['src/lib.rs:88:17','']],
+      [['error','t-red t-b'],[': could not compile `motor` due to 1 previous error','']],
+      [['PS C:\\projetos\\motor> ','t-blue']],
+    ]
+  }[id].slice();
+  if(id==='cc'){
+    if(attnOpen()){ L.push([['']],[['  Permitir este comando?','t-b']],[['  ❯ 1. Sim','t-cyan']],[['    2. Não, e dizer o que fazer','t-dim']]); }
+    else if(S.attn==='allowed'){ L.push([['  ⎿  ','t-dim'],['concluído em 12.4s','t-green']]); }
+    else if(S.attn==='denied'){ L.push([['  ⎿  ','t-dim'],['recusado pelo usuário','t-yellow']]); }
+    S.sent.forEach(x=>L.push([['> ','t-dim'],[x,'']]));
+  }
+  return L;
+}
+const OLDER = [
+  [['PS C:\\projetos\\api> ','t-blue'],['git status','t-b']],
+  [['On branch main','']],[['nothing to commit, working tree clean','t-dim']],
+  [['PS C:\\projetos\\api> ','t-blue'],['git pull','t-b']],
+  [['Already up to date.','t-dim']],
+];
+function renderLines(arr){ return arr.map(l=>`<div class="ln">${l.map(([tx,c])=>`<span class="${c||''}">${h(tx)}</span>`).join('')}</div>`).join(''); }
+
+/* ---------- navegação ---------- */
+function go(scr, keepStack){ if(!keepStack && S.screen!==scr) S.stack.push(S.screen); S.screen=scr; S.overlay=null; S.snack=null; S.heads=false; }
+function back(){ S.overlay=null; S.screen = S.stack.pop() || 'pcs'; }
+
+/* ---------- peças comuns ---------- */
+function appbar(title, sub, opts){ opts=opts||{};
+  return `<div class="appbar">${opts.noBack?'':`<button class="ib" data-act="back" aria-label="${T('common.back')}">${ic('back')}</button>`}
+  <div class="ttl"><b>${h(title)}</b>${sub?`<small>${h(sub)}</small>`:''}</div>${opts.right||''}</div>`;
+}
+function globalBanners(){
+  let b='';
+  if(S.net==='none') b+=`<div class="banner neutral" role="status">${ic('wifioff','s18')}<div class="grow">${T('global.no_network')}</div></div>`;
+  else if(S.net==='bridge') b+=`<div class="banner danger" role="status">${ic('cloudoff','s18')}<div class="grow">${T('global.bridge_down',{bridge:BRIDGE})}</div><div class="act"><button class="btn text" data-act="retry">${T('common.retry')}</button></div></div>`;
+  else if(S.net==='reconnecting') b+=`<div class="banner neutral" role="status"><span class="spinner" style="width:18px;height:18px;border-width:2px"></span><div class="grow">${T('global.reconnecting',{n:3})}</div><div class="act"><button class="btn text" data-act="retry">${T('common.retry')}</button></div></div>`;
+  if(S.outdated) b+=`<div class="banner danger" role="status">${ic('alert','s18')}<div class="grow">${T('global.outdated',{pc:PC})}</div><div class="act"><button class="btn text" data-act="noop">${T('global.outdated_cta')}</button></div></div>`;
+  return b;
+}
+function snack(){ if(!S.snack) return ''; return `<div class="snack" role="status"><div class="grow">${h(S.snack.text)}</div>${S.snack.act?`<button class="btn text" style="color:var(--accent)" data-act="${S.snack.act}">${h(S.snack.actLabel)}</button>`:''}</div>`; }
+function heads(){ if(!S.heads) return ''; return `<button class="heads" data-act="openNotif">${appIcon()}<span><small>${T('notif.title')} · ${T('common.now')}</small><b style="font-weight:600">${T('notif.attn',{pc:PC})}</b></span></button>`; }
+
+/* ---------- telas ---------- */
+const SCREENS = {
+welcome(){ return `<div class="welcome-hero">
+  ${kiteColor(72)}
+  <div style="font-family:var(--font-mono);font-weight:800;font-size:34px;letter-spacing:-1px;line-height:1">pipa</div>
+  <h1 class="h1">${T('welcome.title')}</h1>
+  <p class="body">${T('welcome.body')}</p></div>
+  <div class="pad stack" style="padding-top:8px">
+   <h2 class="h2" style="font-size:15px">${T('welcome.steps_title')}</h2>
+   <ol class="steps"><li>${T('welcome.step1')}</li><li>${T('welcome.step2')}</li><li>${T('welcome.step3')}</li></ol>
+  </div>
+  <div style="flex:1"></div>
+  <div class="pad stack" style="padding-bottom:16px;gap:6px">
+   <button class="btn primary full" data-act="go:add">${ic('plus','s18')}${T('welcome.cta')}</button>
+   <button class="btn text full" data-act="go:security">${ic('shield','s18')}${T('welcome.security_link')}</button>
+  </div>`; },
+security(){ return appbar(t('welcome.security_title')) + `<div class="pad stack" style="padding-top:8px">
+  ${['welcome.security_1','welcome.security_2','welcome.security_3','welcome.security_4'].map((k,i)=>`<div class="row" style="gap:12px;align-items:flex-start"><span class="st neutral">${ic(['lock','phone','pc','fp'][i],'s18')}</span><p class="body" style="color:var(--ink)">${T(k)}</p></div>`).join('')}
+  </div>`; },
+add(){
+  const full = S.code.length===12;
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${S.addTab==='qr'}" data-act="addTab:qr">${T('add.tab_qr')}</button><button role="tab" aria-selected="${S.addTab==='code'}" data-act="addTab:code">${T('add.tab_code')}</button></div>`;
+  const err = S.pairErr ? `<div class="errcard" role="alert">${ic('alert')}<div><b>${T('pair.err_'+S.pairErr+'_title')}</b><p>${T('pair.err_'+S.pairErr+'_body',{pc:PC,bridge:BRIDGE})}</p></div></div>` : '';
+  if(S.addTab==='qr'){
+    return appbar(t('add.title')) + tabs + (S.cameraDenied ?
+      `<div class="pad stack" style="padding-top:16px">${err}<div class="note neutral">${ic('alert','s18')}<span>${T('add.qr_camera_denied')}</span></div><button class="btn secondary full" data-act="noop">${T('common.open_android_settings')}</button><button class="btn text full" data-act="addTab:code">${T('add.tab_code')}</button></div>` :
+      `${err?`<div class="pad" style="padding-top:12px">${err}</div>`:''}<button class="viewfinder" style="border:0;cursor:pointer" data-act="qrScan" aria-label="${T('add.qr_camera_a11y')}"><span class="frame"></span><small>${T('add.qr_hint')}</small></button>`);
+  }
+  const miss = 12-S.code.length;
+  return appbar(t('add.title')) + tabs + `<form class="pad stack" style="padding-top:16px" data-form="code" novalidate>
+    ${err}
+    <div class="field"><label for="code">${T('add.code_label')}</label>
+      <input id="code" class="input code" inputmode="numeric" autocomplete="one-time-code" value="${h(fmtCode(S.code))}" placeholder="0000 · 0000 0000" aria-describedby="codeHelp codeLeft">
+      <p class="hint" id="codeHelp">${T('add.code_help')}</p>
+      <p class="hint" id="codeLeft" aria-live="polite" style="font-weight:600">${full?T('add.code_complete'):T('add.code_missing',{n:miss})}</p></div>
+    <div class="field"><label for="dname">${T('add.name_label')}</label><input id="dname" class="input" value="${h(S.deviceName)}" autocomplete="off" aria-describedby="dnameHelp"><p class="hint" id="dnameHelp">${T('add.name_help')}</p></div>
+    <div class="setrow card" style="border-radius:10px;padding:8px 8px 8px 14px"><div class="l"><b>${T('add.bridge_label')}</b><small class="mono">${BRIDGE}</small></div><button type="button" class="btn text" data-act="go:settings">${T('add.bridge_change')}</button></div>
+    <p class="hint">${T('add.bridge_help')}</p>
+    <button type="submit" id="codeSubmit" class="btn primary full" aria-disabled="${!full}" aria-describedby="codeLeft">${T('add.submit')}</button>
+  </form>`;
+},
+pairConnecting(){ return appbar(t('add.title')) + `<div class="empty" style="align-items:center;text-align:center;flex:1;justify-content:center"><span class="spinner"></span><p class="body" role="status">${T('pair.connecting')}</p><p class="hint mono">${BRIDGE}</p></div>`; },
+pairVerify(){ return appbar(t('pair.verify_title'), PC) + `<div class="pad stack" style="padding-top:8px">
+  <p class="body" style="color:var(--ink)">${T('pair.verify_body',{pc:PC})}</p>
+  <div class="sas" aria-label="${T('pair.verify_code_a11y',{code:SAS})}">${SAS}</div>
+  <div class="row" style="align-items:center"><span class="spinner" style="width:20px;height:20px;border-width:2px;flex:none"></span><p class="body" role="status">${T('pair.verify_wait')}</p></div>
+  <p class="hint">${T('pair.verify_mismatch_hint')}</p></div><div style="flex:1"></div>
+  <div class="pad" style="padding-bottom:16px"><button class="btn secondary full" data-act="pairCancel">${T('common.cancel')}</button></div>`; },
+pairSuccess(){ return `<div class="empty" style="padding-top:56px"><span class="st ok" style="width:56px;height:56px;border-radius:14px">${ic('check')}</span>
+  <h1 class="h1">${T('pair.success_title',{pc:PC})}</h1><p class="body">${T('pair.success_body')}</p></div><div style="flex:1"></div>
+  <div class="pad" style="padding-bottom:16px"><button class="btn primary full" data-act="go:sessions">${T('pair.success_cta')}</button></div>`; },
+pcs(){
+  const s1 = S.pc==='online' ? `<span class="dot" style="background:var(--ok)"></span><span style="color:var(--ok)">${T('pcs.online')}</span> · ${T('pcs.terminals_other',{n:4})}${attnOpen()?` · <span style="color:var(--attn);font-weight:600">${T('pcs.attn_one')}</span>`:''}`
+    : S.pc==='cut' ? `<span class="dot" style="background:var(--offline)"></span>${T('pcs.cut')}`
+    : `<span class="dot" style="border:2px solid var(--offline)"></span>${T('pcs.offline_since',{time:'14:02'})}`;
+  const item=(name,line,act,sub2)=>`<button class="li" data-act="${act}"><span class="st neutral">${ic('pc','s18')}</span><span class="main"><span class="name mono">${name}</span><span class="sub" style="display:flex;gap:6px;align-items:center;font-family:var(--font-ui);font-size:13px">${line}</span>${sub2?`<span class="sub" style="font-family:var(--font-ui);font-size:13px">${sub2}</span>`:''}</span>${ic('chev','s18 chev')}</button>`;
+  return `<div class="appbar"><div class="wordmark">${kiteColor(26)}<b>pipa</b></div><button class="ib" data-act="go:devices" aria-label="${T('devices.title')}">${ic('shield')}</button><button class="ib" data-act="go:settings" aria-label="${T('settings.title')}">${ic('set')}</button></div>
+  ${globalBanners()}
+  <p class="sec">${T('pcs.title')}</p>
+  <div class="list">${item(PC,s1,'go:sessions', S.pc==='offline'?T('pcs.offline_hint'):'')}${item(PC2,`<span class="dot" style="border:2px solid var(--offline)"></span>${T('pcs.offline_since',{time:'09:14'})}`,'go:sessions2',T('pcs.offline_hint'))}</div>
+  <div class="pad" style="padding-top:16px"><button class="btn secondary full" data-act="go:add">${ic('plus','s18')}${T('pcs.add')}</button></div>`;
+},
+sessions2(){ return appbar(PC2, t('pcs.offline_since',{time:'09:14'})) + `<div class="banner neutral" role="status">${ic('pc','s18')}<div class="grow">${T('global.pc_offline',{pc:PC2,time:'09:14'})}</div></div><div class="empty"><p class="body">${T('global.pc_offline_empty')}</p></div>`; },
+sessions(){
+  const sub = S.pc==='online' ? t('pcs.online') : S.pc==='cut' ? t('pcs.cut') : t('pcs.offline_since',{time:'14:02'});
+  let top = appbar(PC, sub, {right:`<button class="ib" data-act="go:devices" aria-label="${T('devices.title')}">${ic('shield')}</button>`}) + globalBanners();
+  if(S.pc==='cut') return top + `<div class="empty"><span class="st off" style="width:56px;height:56px;border-radius:14px">${ic('slash')}</span><h2 class="h1" style="font-size:20px">${T('global.cut_title',{pc:PC})}</h2><p class="body">${T('global.cut_body')}</p></div>`;
+  if(S.pc==='offline') top += `<div class="banner neutral" role="status">${ic('pc','s18')}<div class="grow">${T('global.pc_offline',{pc:PC,time:'14:02'})}</div><div class="act"><button class="btn text" data-act="retry">${T('common.retry')}</button></div></div>`;
+  if(S.pc==='offline') return top + `<div class="empty"><p class="body">${T('global.pc_offline_empty')}</p></div>`;
+  if(S.emptySessions) return top + `<div class="empty"><span class="st neutral" style="width:56px;height:56px;border-radius:14px">${ic('term')}</span><h2 class="h2">${T('sessions.empty_title')}</h2><p class="body">${T('sessions.empty_body')}</p></div>`;
+  const ab = attnOpen() ? `<div class="banner attn">${ic('bell','s18')}<div class="grow" style="font-weight:600">${T('sessions.attn_banner_one')}</div><div class="act"><button class="btn text" data-act="go:attn">${T('sessions.attn_banner_cta')}</button></div></div>` : '';
+  const row = (s)=>{ const st=status(s.id); const arm=isArmed(s.id);
+    const a11y = t('sessions.item_a11y',{session:s.name,status:st.label,context:ctx(s.id)}) + (arm?'. '+t('sessions.armed_chip_a11y',{time:mmss(armedLeft(s.id))}):'');
+    return `<button class="li" data-act="openSession:${s.id}" aria-label="${h(a11y)}"><span class="st ${st.tone}">${ic(st.icon,'s18')}</span><span class="main"><span class="name">${h(s.name)} <span class="chip ${st.tone}">${h(st.label)}</span>${arm?`<span class="chip armed">${ic('unlock','s16')}<span data-until="${S.armed[s.id]}" data-fmt="sessions.armed_chip"></span></span>`:''}</span><span class="sub">${h(ctx(s.id))}</span></span>${ic('chev','s18 chev')}</button>`; };
+  const active = SESS.filter(s=>status(s.id).k.indexOf('exited')<0), ended = SESS.filter(s=>status(s.id).k.indexOf('exited')===0);
+  return top + ab + `<p class="hint pad" style="padding-top:10px;display:flex;gap:6px;align-items:center">${ic('lock','s16')}${T('sessions.readonly_note')}</p>
+   <p class="sec">${T('sessions.section_active')}</p><div class="list">${active.map(row).join('')}</div>
+   ${ended.length?`<p class="sec">${T('sessions.section_ended')}</p><div class="list">${ended.map(row).join('')}</div>`:''}`;
+},
+session(){
+  const s = sess(S.sid), st = status(s.id), arm = isArmed(s.id), ended = st.k.indexOf('exited')===0 || S.ended===s.id;
+  const right = `<button class="ib" data-act="openTerminate" aria-label="${T('session.menu_terminate')}">${ic('more')}</button>`;
+  let mode = '';
+  if(ended) mode = `<div class="banner ${st.tone==='danger'?'danger':'neutral'}" role="status">${ic(st.tone==='danger'?'x':'check','s18')}<div class="grow">${S.lost?T('session.lost_banner',{time:'14:10'}):T('session.exited_banner',{exit: s.id==='bd'?1:0, time:'14:21'})}</div></div>`;
+  else if(arm) mode = `<div class="modebar on" role="status">${ic('unlock','s18')}<div class="grow"><b data-until="${S.armed[s.id]}" data-fmt="session.armed_bar"></b><small>${T('session.armed_hint')}</small></div><button class="btn secondary" data-act="disarm">${ic('lock','s16')}${T('session.disarm')}</button></div>`;
+  else mode = `<div class="modebar ro">${ic('lock','s18')}<div class="grow"><b>${T('session.readonly_bar')}</b><small>${T('session.readonly_hint')}</small></div><button class="btn primary" data-act="openArm">${T('session.arm_cta')}</button></div>`;
+  let hist = '';
+  if(s.id==='cc'){
+    if(S.histEnd) hist = `<div class="meta">${ic('hist','s16')}${T('session.history_start')}</div>`;
+    else if(S.histLoading) hist = `<div class="meta" role="status"><span class="spinner" style="width:14px;height:14px;border-width:2px"></span>${T('session.history_loading')}</div>`;
+    else hist = `<div class="meta"><button class="btn text" style="min-height:44px;padding:0 4px" data-act="histLoad">${ic('hist','s16')}${T('session.history_load')}</button></div>`;
+  }
+  const older = s.id==='cc' && S.hist>0 ? renderLines(OLDER) : '';
+  const L = lines(s.id);
+  const term = `<div class="term" role="log" aria-label="${T('session.terminal_a11y',{session:s.name,n:L.length})}" tabindex="0">${hist}${older}${renderLines(L)}</div>`;
+  const pinned = (s.id==='cc' && attnOpen()) ? `<div class="pinned">${ic('bell','s18')}<span class="grow">${T('session.attn_pinned',{cmd:attnCmd()})}</span><button class="btn" data-act="go:attn">${T('session.attn_view')}</button></div>` : '';
+  let composer = '';
+  if(!ended){
+    const dis = !arm;
+    const sl = S.send==='sending'?`<p id="sendWhy" class="statusline" role="status">${T('session.sending')}</p>`
+      : S.send==='sent'?`<p id="sendWhy" class="statusline ok" role="status">${T('session.sent')}</p>`
+      : S.send==='stale'?`<p id="sendWhy" class="statusline err" role="alert">${T('session.err_stale')}</p>`
+      : S.send==='uncertain'?`<p id="sendWhy" class="statusline" role="status">${T('session.err_uncertain')}</p>`
+      : S.send==='not_armed'?`<p id="sendWhy" class="statusline err" role="alert">${T('session.err_not_armed')}</p>`
+      : dis?`<p id="sendWhy" class="statusline">${T('session.send_disabled_reason')}</p>`:`<p id="sendWhy" class="statusline">${T('session.send_enter_note')}</p>`;
+    const k=(lab,a11y,key)=>`<button type="button" class="k-${key}" aria-label="${T(a11y)}" aria-disabled="${dis}" data-act="key:${key}">${lab}</button>`;
+    composer = `<form class="composer" data-form="send">
+      <div class="line"><label class="sr" for="draft">${T('session.input_label',{session:s.name})}</label>
+      <input id="draft" class="input" autocomplete="off" autocapitalize="off" spellcheck="false" ${dis?'disabled':''} value="${h(S.draft)}" placeholder="${dis?T('session.input_placeholder_ro'):T('session.input_placeholder')}" aria-describedby="sendWhy">
+      <button type="submit" class="btn ${dis?'':'armed'} send" aria-label="${T('session.send_a11y',{session:s.name})}" aria-disabled="${dis||S.send==='sending'}" aria-describedby="sendWhy">${ic('send')}</button></div>
+      ${sl}
+      <div class="keys" role="group" aria-label="${T('keys.bar_label')}">${k('Esc','keys.esc_a11y','esc')}${k('Tab','keys.tab_a11y','tab')}${k('←','keys.left_a11y','left')}${k('↑','keys.up_a11y','up')}${k('↓','keys.down_a11y','down')}${k('→','keys.right_a11y','right')}${k('Enter','keys.enter_a11y','enter')}${k('Ctrl+C','keys.ctrlc_a11y','ctrlc')}</div>
+    </form>`;
+  }
+  return `<div style="display:flex;flex-direction:column;flex:1;min-height:0">${appbar(s.name, `${PC} · ${t('session.size_desktop',{cols:120,rows:32})}`,{right})}${globalBanners()}${mode}${term}${pinned}${composer}</div>`;
+},
+attn(){
+  const s = sess('cc');
+  const title = t('attn.title_permission');
+  const src = S.attnSource==='adapter' ? `<span class="srcbadge">${ic('check','s16')}${T('attn.source_adapter')}</span>` : `<span class="srcbadge warn">${ic('alert','s16')}<span>${T('attn.source_heuristic')}</span></span>`;
+  const destr = S.attnKind==='destructive';
+  const arm = isArmed('cc');
+  let body = `<div class="attn-body">
+    ${src}
+    <div><p class="body" style="color:var(--ink);margin-bottom:6px">${T('attn.run_command')}</p><div class="cmdbox">${h(attnCmd())}</div></div>
+    <p class="hint mono">${T('attn.where',{session:s.name,pc:PC,path:s.cwd})} · ${T('attn.age_s',{n:12})}</p>
+    ${destr?`<div class="note danger">${ic('alert','s18')}<span>${T('attn.destructive_note')}</span></div>`: (!arm && attnOpen()?`<div class="note neutral">${ic('fp','s18')}<span>${T('attn.need_bio_note')}</span></div>`:'')}
+  </div>`;
+  let actions;
+  const res = (tone,icon,txt)=>`<div class="note ${tone}" role="status">${ic(icon,'s18')}<span>${txt}</span></div><button class="btn secondary full" data-act="openSession:cc">${T('attn.open_terminal')}</button>`;
+  if(S.attn==='open'){
+    const allowBtn = destr || !arm ? `<button class="btn ${destr?'danger':'primary'}" data-act="attnAllow">${ic('fp','s18')}${T(destr||!arm?'attn.allow_bio':'attn.allow')}</button>` : `<button class="btn primary" data-act="attnAllow">${T('attn.allow')}</button>`;
+    actions = `<div class="row"><button class="btn secondary" data-act="attnDeny">${T('attn.deny')}</button>${allowBtn}</div><button class="btn text full" data-act="openSession:cc">${T('attn.open_terminal')}</button>`;
+  } else if(S.attn==='sending') actions = `<div class="note neutral" role="status"><span class="spinner" style="width:18px;height:18px;border-width:2px"></span><span>${T('attn.sending')}</span></div>`;
+  else if(S.attn==='allowed') actions = res('ok','check',T('attn.done_allowed'));
+  else if(S.attn==='denied') actions = res('neutral','x',T('attn.done_denied'));
+  else if(S.attn==='stale') actions = res('neutral','pc',T('attn.stale_pc',{time:'14:33'}));
+  else if(S.attn==='expired') actions = res('attn','alert',T('attn.expired',{time:'14:40'}));
+  return `<div style="display:flex;flex-direction:column;flex:1;min-height:0">${appbar(title, `${s.name} · ${PC}`)}<div style="flex:1;overflow:auto">${body}</div><div class="actions">${actions}</div></div>`;
+},
+devices(){
+  const row=(name,sub,me)=>`<div class="setrow"><div class="row" style="align-items:center;gap:12px;min-width:0"><span class="st neutral">${ic(name.indexOf('Tab')>=0?'pc':'phone','s18')}</span><div class="l"><b>${h(name)}${me?` <span class="chip neutral">${T('devices.you')}</span>`:''}</b><small>${sub}</small></div></div></div>`;
+  const aud=[['14:31','audit.attn_allow',{session:'Claude Code'}],['14:24','audit.input',{n:38,session:'Backend'}],['14:23','audit.armed',{session:'Backend',n:5}],['14:20','audit.connected',{}],['09:02','audit.keys',{keys:'Ctrl+C',session:'Build'}]];
+  return appbar(t('devices.title')) + `<p class="sec">${T('devices.this_phone')}</p>
+   <div class="setrow"><div class="row" style="align-items:center;gap:12px"><span class="st neutral">${ic('phone','s18')}</span><div class="l"><b>Pixel 8</b><small>${T('devices.paired_on',{pc:PC,date:'26/09/2026'})}</small><small>${T('devices.key_strongbox')}</small></div></div></div>
+   <div class="setrow"><div class="l"><b>${T('devices.screenshot_block')}</b><small>${T('devices.screenshot_block_help')}</small></div><button class="switch" role="switch" aria-checked="${S.shots}" aria-label="${T('devices.screenshot_block')}" data-act="toggleShots"></button></div>
+   <div class="setrow"><div class="l"><b>${T('devices.app_lock')}</b><small>${T('devices.app_lock_help')}</small></div><button class="switch" role="switch" aria-checked="${S.appLock}" aria-label="${T('devices.app_lock')}" data-act="toggleLock"></button></div>
+   <p class="sec">${T('devices.on_pc',{pc:PC})}</p>
+   ${row('Pixel 8',T('devices.connected_now'),true)}${row('Galaxy Tab S9',T('devices.last_seen',{when:t('common.ago_d',{n:3})}))}
+   <p class="hint pad" style="padding-top:8px">${T('devices.revoke_on_pc',{pc:PC})}</p>
+   <p class="sec">${T('devices.audit_title')}</p>
+   ${aud.map(a=>`<div class="audit"><time>${a[0]}</time><span>${T(a[1],a[2])}</span></div>`).join('')}
+   <p class="hint pad" style="padding-top:8px">${T('devices.audit_note')}</p>
+   <div class="pad" style="padding-block:16px"><button class="btn secondary full" style="color:var(--danger);border-color:var(--danger)" data-act="openRemove">${ic('trash','s18')}${T('devices.remove_pc',{pc:PC})}</button></div>`;
+},
+settings(){
+  const seg=(name,cur,opts)=>`<div class="seg" role="radiogroup" aria-label="${T(name)}" style="margin:0 16px 8px">${opts.map(([v,k])=>`<button role="radio" aria-checked="${cur===v}" data-act="${name}:${v}" style="font-family:var(--font-ui);font-size:14px">${T(k)}</button>`).join('')}</div>`;
+  return appbar(t('settings.title')) + `
+   <div class="setrow"><div class="l"><b>${T('settings.bridge')}</b><small class="mono">${BRIDGE}</small><small style="color:${S.net==='bridge'?'var(--danger)':'var(--ok)'}">${S.net==='bridge'?T('settings.bridge_err'):T('settings.bridge_ok',{ms:182})}</small></div><button class="btn text" data-act="noop">${T('add.bridge_change')}</button></div>
+   <p class="hint pad" style="padding-block:8px">${T('settings.bridge_help')}</p>
+   <p class="sec">${T('settings.language')}</p>${seg('settings.language',S.settingsLang,[['system','settings.lang_system'],['pt','settings.lang_pt'],['en','settings.lang_en']])}
+   <p class="sec">${T('settings.theme')}</p>${seg('settings.theme',S.settingsTheme,[['system','settings.theme_system'],['light','settings.theme_light'],['dark','settings.theme_dark']])}
+   <button class="li" style="min-height:64px" data-act="noop"><span class="main"><span class="name">${T('settings.notifications')}</span><span class="sub" style="font-family:var(--font-ui);white-space:normal">${T('settings.notifications_help')}</span></span>${ic('chev','s18 chev')}</button>
+   <button class="li" style="min-height:56px" data-act="go:devices"><span class="main"><span class="name">${T('settings.security')}</span></span>${ic('chev','s18 chev')}</button>
+   <div class="setrow"><div class="l"><b>${T('settings.about')}</b><small class="mono">${T('settings.version',{v:'0.1.0'})}</small></div></div>`;
+},
+revoked(){ return `<div class="empty" style="padding-top:64px"><span class="st danger" style="width:56px;height:56px;border-radius:14px">${ic('slash')}</span>
+  <h1 class="h1">${T('global.revoked_title',{pc:PC})}</h1><p class="body">${T('global.revoked_body',{time:'15:10'})}</p></div><div style="flex:1"></div>
+  <div class="pad stack" style="padding-bottom:16px;gap:8px"><button class="btn primary full" data-act="go:add">${T('global.revoked_readd')}</button><button class="btn secondary full" data-act="go:pcs">${T('global.revoked_forget')}</button></div>`; },
+lock(){ return `<div class="lock"><div class="clock">14:32</div><div class="date">${S.lang==='pt'?'sábado, 26 de setembro':'Saturday, September 26'}</div>
+  <button class="n" data-act="openNotif">${appIcon()}<span><small>${T('notif.title')} · ${T('common.now')}</small><b style="font-weight:600">${T('notif.attn',{pc:PC})}</b></span></button>
+  <button class="n" data-act="openNotif" style="margin-top:8px">${appIcon()}<span><small>${T('notif.title')} · ${T('common.ago_min',{n:4})}</small><b style="font-weight:600">${T('notif.attn_many',{n:2,pc:PC2})}</b></span></button>
+  <p class="cap">${T('notif.lock_screen')} · ${T('notif.channel_attn')}: ${T('notif.channel_attn_desc')}</p></div>`; },
+};
+SCREENS.pairErrScreen = SCREENS.add;
+
+/* ---------- overlays do celular ---------- */
+function overlay(){
+  const s = sess(S.sid);
+  if(S.overlay==='arm'){
+    const opts=[1,5,15];
+    let body;
+    if(S.policyOff) body = `<div class="note neutral">${ic('slash','s18')}<span>${T('arm.policy_off',{pc:PC})}</span></div><button class="btn secondary full" data-act="closeOverlay">${T('common.close')}</button>`;
+    else if(S.noBio) body = `<div class="note attn">${ic('fp','s18')}<span>${T('arm.no_biometric')}</span></div><button class="btn primary full" data-act="noop">${T('common.open_android_settings')}</button><button class="btn text full" data-act="closeOverlay">${T('common.cancel')}</button>`;
+    else body = `<p class="body">${T('arm.body')}</p>
+      <div class="field"><span style="font-weight:600;font-size:14px" id="durLbl">${T('arm.duration')}</span>
+      <div class="seg" role="radiogroup" aria-labelledby="durLbl">${opts.map(n=>`<button role="radio" aria-checked="${S.armMin===n}" data-act="armMin:${n}">${T('arm.min',{n})}</button>`).join('')}</div>
+      <p class="hint">${T('arm.policy_max',{pc:PC,n:15})}</p></div>
+      <button class="btn armed full" data-act="armConfirm">${ic('fp','s18')}${T('arm.cta')}</button>
+      <button class="btn text full" data-act="closeOverlay">${T('common.cancel')}</button>`;
+    return `<div class="scrim" data-act="closeOverlay"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="armT" data-stop><div class="grab"></div><h2 class="h2" id="armT">${T('arm.title',{session:s.name})}</h2>${body}</div></div>`;
+  }
+  if(S.overlay==='bio'){
+    const isArm = S.bioFor==='arm';
+    const title = isArm ? t('arm.bio_title') : S.bioFor==='terminate' ? t('terminate.cta') : t('attn.bio_title');
+    const sub = isArm ? t('arm.bio_subtitle',{session:s.name,pc:PC,n:S.armMin}) : S.bioFor==='terminate' ? s.name+' · '+PC : t('attn.bio_subtitle',{cmd:attnCmd(),session:'Claude Code'});
+    return `<div class="scrim"><div class="bio" role="dialog" aria-modal="true" aria-labelledby="bioT">${appIcon()}<h2 class="h2" id="bioT">${h(title)}</h2><p class="body">${h(sub)}</p>
+      <button class="fp" data-act="bioOk" aria-label="${T('arm.bio_hint')}">${ic('fp')}</button><p class="hint">${T('arm.bio_hint')}</p>
+      <div class="actions2"><button class="btn text" data-act="noop">${T('arm.bio_use_pin')}</button><button class="btn text" data-act="closeOverlay">${T('common.cancel')}</button></div></div></div>`;
+  }
+  if(S.overlay==='terminate') return `<div class="scrim center" data-act="closeOverlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="trT" data-stop><h2 class="h2" id="trT">${T('terminate.title',{session:s.name})}</h2><p class="body">${T('terminate.body',{pc:PC})}</p><div class="btns"><button class="btn text" data-act="closeOverlay">${T('common.cancel')}</button><button class="btn danger" data-act="terminateConfirm">${ic('fp','s18')}${T('terminate.cta')}</button></div></div></div>`;
+  if(S.overlay==='remove') return `<div class="scrim center" data-act="closeOverlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="rmT" data-stop><h2 class="h2" id="rmT">${T('devices.remove_confirm_title',{pc:PC})}</h2><p class="body">${T('devices.remove_confirm_body')}</p><div class="btns"><button class="btn text" data-act="closeOverlay">${T('common.cancel')}</button><button class="btn danger" data-act="removeConfirm">${T('devices.remove_confirm_cta',{pc:PC})}</button></div></div></div>`;
+  return '';
+}
+
+function renderPhone(){
+  const scr = SCREENS[S.screen] ? SCREENS[S.screen]() : '';
+  const net = S.net==='none' ? ic('wifioff','s16') : `<svg class="i s16" aria-hidden="true"><use href="#i-refresh" style="display:none"/></svg>`;
+  document.getElementById('phone').innerHTML =
+    `<div class="sbar" aria-hidden="true"><span>14:32</span><span class="ic">${S.net==='none'?ic('wifioff','s16'):'<span style="font-size:11px">5G</span>'}<span style="display:inline-block;width:22px;height:11px;border:1.5px solid currentColor;border-radius:3px;position:relative"><i style="position:absolute;inset:1.5px;right:6px;background:currentColor;border-radius:1px"></i></span></span></div>
+     <div class="content" id="content">${scr}</div><div class="gbar"><i></i></div>${overlay()}${snack()}${heads()}`;
+}
+
+/* ---------- VS Code ---------- */
+function vsStatusItem(){
+  const v=S.vs;
+  if(v.mode==='agentOff') return `<button class="it warn" data-act="vsStart" title="${T('vsc.status_agent_off_tooltip')}">${kite(14)}${T('vsc.status_agent_off')}</button>`;
+  if(v.mode==='cut') return `<button class="it" data-act="vsQp" title="${T('vsc.status_cut_tooltip')}">${ic('slash','s16')}${T('vsc.status_cut')}</button>`;
+  if(v.modal==='allow') return `<button class="it warn" data-act="vsQp">${kite(14)}${T('vsc.status_pending',{device:S.deviceName})}</button>`;
+  if(isArmed('cc')) return `<button class="it warn" data-act="vsQp" title="${h(t('vsc.status_armed_tooltip',{device:'Pixel 8',session:'Claude Code',time:clock(Math.ceil(armedLeft('cc')/60000))}))}">${kite(14)}${T('vsc.status_armed',{device:'Pixel 8'})}</button>`;
+  const n = v.devices.filter(d=>d.state==='connected').length;
+  return `<button class="it" data-act="vsQp" title="${T('vsc.status_tooltip',{n})}">${kite(14)}${n===1?T('vsc.status_phones_one'):T('vsc.status_phones_other',{n})}</button>`;
+}
+function vsTermName(s){ return (s.id==='cc' && isArmed('cc') && S.vs.mode!=='cut') ? t('vsc.term_name_armed',{name:s.name,device:'Pixel 8'}) : s.name; }
+function qrSvg(){
+  let seed=48219137; const r=()=>{ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; };
+  const N=29; let rects='';
+  const finder=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#000"/>`;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){ const inF=(x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9); if(!inF && r()>.52) rects+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#000"/>`; }
+  return `<svg class="qr" viewBox="0 0 ${N} ${N}" role="img" aria-label="${T('vsc.pair_qr_alt')} (${T('proto.fake_qr')})" shape-rendering="crispEdges"><rect width="${N}" height="${N}" fill="#fff"/>${rects}${finder(0,0)}${finder(N-7,0)}${finder(0,N-7)}</svg>`;
+}
+function webview(){
+  const v=S.vs; let state='', warn=false, showCode = ['waiting','confirming'].includes(v.pairState);
+  if(v.pairState==='waiting') state=T('vsc.pair_waiting');
+  else if(v.pairState==='confirming') state=T('vsc.pair_confirming',{device:S.deviceName});
+  else if(v.pairState==='success') state=T('vsc.pair_success',{device:S.deviceName});
+  else { warn=true; state = v.pairState==='expired'?T('vsc.pair_expired'):v.pairState==='wrong'?T('vsc.pair_wrong'):v.pairState==='rejected'?T('vsc.pair_rejected',{device:S.deviceName}):T('vsc.pair_bridge_down',{bridge:BRIDGE}); }
+  return `<div class="wv"><h3>${kite(20)}${T('vsc.pair_title')}</h3>
+   <ol><li>${T('vsc.pair_step1')}</li><li>${T('vsc.pair_step2')}</li><li>${T('vsc.pair_step3')}</li></ol>
+   ${showCode?`<div class="grid"><div style="display:flex;flex-direction:column;gap:6px"><span class="lbl">${T('vsc.pair_code_label')}</span>
+     <span class="code-big" aria-live="off">${v.hidden?'•••• · •••• ••••':CODE}</span>
+     ${v.hidden?`<span class="desc">${T('vsc.pair_hidden_note')}</span>`:''}
+     <span class="desc"><span data-until="${v.pairEnd}" data-fmt="vsc.pair_valid"></span></span>
+     <div class="btns" style="margin-top:6px"><button class="vbtn sec" data-act="vsHide">${ic(v.hidden?'eye':'eye','s16')} ${v.hidden?T('vsc.pair_show'):T('vsc.pair_hide')}</button><button class="vbtn sec" data-act="vsNewCode">${T('vsc.pair_new')}</button></div></div>
+     <div>${v.hidden?`<div class="qr" style="display:grid;place-items:center;color:#555;font-size:12px;text-align:center">${T('vsc.pair_hidden_note')}</div>`:qrSvg()}</div></div>`:''}
+   <div class="state ${warn?'warn':''}" role="status">${state}</div>
+   ${(!showCode && v.pairState!=='success')?`<div class="btns"><button class="vbtn" data-act="vsNewCode">${T('vsc.pair_new')}</button></div>`:''}
+   <span class="desc">${T('vsc.pair_bridge',{bridge:BRIDGE})}</span></div>`;
+}
+function vsTree(){
+  const v=S.vs;
+  if(!v.paired) return `<div class="vs-welcome"><span>${T('vsc.tree_welcome_text')}</span><button class="vbtn" data-act="vsPair">${T('vsc.cmd_pair')}</button></div>`;
+  const devs = v.devices.map(d=>`<div class="vs-row" style="padding-left:26px">${ic('phone','s16')}<span class="grow"><span>${h(d.name)}</span><span class="d">${d.state==='connected'?T('vsc.tree_device_connected'):T('vsc.tree_device_seen',{when:t('common.ago_d',{n:d.when})})}</span></span><button class="vs-tico" data-act="vsRevoke:${d.id}" aria-label="${T('vsc.tree_revoke')}: ${h(d.name)}" title="${T('vsc.tree_revoke')}">${ic('trash','s16')}</button></div>`).join('');
+  const ses = SESS.map(s=>{ const a = s.id==='cc' && isArmed('cc'); return `<div class="vs-row" style="padding-left:26px">${kite(14, 'var(--vscode-terminal-ansiYellow)')}<span class="grow"><span>${h(s.name)}</span><span class="d">${a?T('vsc.tree_session_armed',{device:'Pixel 8',time:clock(Math.ceil(armedLeft('cc')/60000))}):T('vsc.tree_session_ro')}</span></span>${a?`<button class="vs-tico" data-act="vsDisarm" aria-label="${T('vsc.cmd_disarm',{device:'Pixel 8'})}" title="${T('vsc.cmd_disarm',{device:'Pixel 8'})}">${ic('lock','s16')}</button>`:''}</div>`; }).join('');
+  const act = [['14:31','Pixel 8 · '+t('audit.attn_allow',{session:'Claude Code'})],['14:23','Pixel 8 · '+t('audit.armed',{session:'Backend',n:5})],['14:20','Pixel 8 · '+t('audit.connected')]].map(a=>`<div class="vs-row" style="padding-left:26px"><span class="d" style="font-family:var(--vscode-editor-font-family)">${a[0]}</span><span class="grow"><span>${h(a[1])}</span></span></div>`).join('');
+  const hd=(txt,d)=>`<div class="vs-row" style="font-weight:600">${ic('down','s16')}<span class="grow"><span>${txt}</span>${d?`<span class="d" style="font-weight:400">${d}</span>`:''}</span></div>`;
+  return `<div class="vs-tree">${hd(T('vsc.tree_this_pc',{pc:PC}), v.mode==='cut'?T('vsc.status_cut'):T('vsc.tree_agent_on'))}${hd(T('vsc.tree_devices'))}${devs}${hd(T('vsc.tree_sessions'))}${ses}${hd(T('vsc.tree_activity'))}${act}</div>`;
+}
+function vsQp(){
+  const v=S.vs; const items=[];
+  if(v.mode==='cut') items.push(['vsRestore','refresh',t('vsc.cmd_restore'),'']);
+  if(isArmed('cc') && v.mode!=='cut') items.push(['vsDisarm','lock',t('vsc.cmd_disarm',{device:'Pixel 8'}),'']);
+  items.push(['vsPair','phone',t('vsc.cmd_pair'),'']);
+  items.push(['vsShowTree','shield',t('vsc.cmd_devices'),'']);
+  if(v.mode!=='cut') items.push(['vsCut','slash',t('vsc.cmd_cut'),t('vsc.cmd_cut_detail')]);
+  items.push(['noop','set',t('vsc.cmd_settings'),'']);
+  return `<div class="vs-qp" role="dialog" aria-label="${T('vsc.menu_placeholder')}"><div class="in">${T('vsc.menu_placeholder')}</div><div role="listbox">${items.map(i=>`<button role="option" data-act="${i[0]}"><span class="lbl">${ic(i[1],'s16')}${h(i[2])}</span>${i[3]?`<small>${h(i[3])}</small>`:''}</button>`).join('')}</div></div>`;
+}
+function vsModal(){
+  const m=S.vs.modal; if(!m) return '';
+  if(m==='allow') return `<div class="vs-modal-scrim"><div class="vs-modal" role="alertdialog" aria-modal="true" aria-labelledby="vmT" aria-describedby="vmD"><div class="hd"><span style="color:#C27D00">${ic('alert')}</span><div><b id="vmT">${T('vsc.allow_title',{device:S.deviceName})}</b><p id="vmD" style="margin-top:8px">${T('vsc.allow_detail',{device:S.deviceName,code:SAS})}</p></div></div><div class="btns"><button class="vbtn" data-act="vsAllow">${T('vsc.allow_yes')}</button><button class="vbtn sec" data-act="vsDeny">${T('vsc.allow_no')}</button></div></div></div>`;
+  if(m.indexOf('revoke:')===0){ const d=S.vs.devices.find(x=>x.id===m.split(':')[1]); return `<div class="vs-modal-scrim"><div class="vs-modal" role="alertdialog" aria-modal="true" aria-labelledby="vmT"><div class="hd"><span style="color:#C27D00">${ic('alert')}</span><div><b id="vmT">${T('vsc.revoke_title',{device:d.name})}</b><p style="margin-top:8px">${T('vsc.revoke_detail')}</p></div></div><div class="btns"><button class="vbtn" data-act="vsRevokeYes:${d.id}">${T('vsc.revoke_yes')}</button><button class="vbtn sec" data-act="vsModalClose">${T('common.cancel')}</button></div></div></div>`; }
+  return '';
+}
+function vsToasts(){ return `<div class="vs-toasts">${S.vs.toasts.map((x,i)=>`<div class="vs-toast" role="status"><div class="hd">${x.warn?`<span style="color:#C27D00">${ic('alert','s16')}</span>`:kite(16)}<span>${h(x.text)}</span><button class="vs-tico" data-act="vsToastClose:${i}" aria-label="${T('common.close')}">${ic('close','s16')}</button></div>${x.act?`<div class="btns"><button class="vbtn" data-act="${x.act}">${h(x.actLabel)}</button></div>`:''}</div>`).join('')}</div>`; }
+function renderVs(){
+  const v=S.vs;
+  const code = `<div class="code">${['import { criarServidor } from "./http";','import { pedidos } from "./rotas/pedidos";','','const app = criarServidor();','app.use("/pedidos", pedidos);','','app.listen(3000, () => {','  console.log("servidor ouvindo em :3000");','});'].map((l,i)=>`<i>${i+1}</i>${h(l)}`).join('\n')}</div>`;
+  const edTabs = `<div class="vs-tabs" role="tablist"><button class="vs-tab" role="tab" aria-selected="${v.editor==='code'}" data-act="vsEditor:code">server.ts</button>${v.pair?`<button class="vs-tab" role="tab" aria-selected="${v.editor==='pair'}" data-act="vsEditor:pair">${kite(13)} ${T('vsc.pair_title')}</button>`:''}</div>`;
+  const editor = v.pair && v.editor==='pair' ? webview() : code;
+  const active = sess(v.active);
+  const termBody = v.mode==='agentOff' ? `<div class="vs-term"><div class="ln" style="white-space:normal;color:var(--vscode-descriptionForeground)">${T('vsc.status_agent_off_tooltip')}</div><div style="margin-top:8px"><button class="vbtn" data-act="vsStart">${T('vsc.cmd_start')}</button></div></div>`
+    : `<div class="vs-term" role="log" tabindex="0" aria-label="${h(vsTermName(active))}">${renderLines(lines(v.active))}</div><div class="vs-tlist" role="tablist">${SESS.map(s=>`<button class="vs-titem" role="tab" aria-selected="${v.active===s.id}" data-act="vsTerm:${s.id}">${kite(13,'var(--vscode-terminal-ansiYellow)')}<span>${h(vsTermName(s))}</span></button>`).join('')}</div>`;
+  const panel = `<div class="vs-panel"><div class="vs-ptabs"><span role="tablist" style="display:flex;gap:18px"><button role="tab" aria-selected="${v.tab==='terminal'}" data-act="vsTab:terminal">Terminal</button><button role="tab" aria-selected="${v.tab==='pipa'}" data-act="vsTab:pipa">${kite(12)}${T('vsc.tree_title')}</button></span><span class="sp"></span>${v.tab==='pipa'?`<button class="vs-tico" data-act="vsPair" aria-label="${T('vsc.cmd_pair')}" title="${T('vsc.cmd_pair')}">${ic('plus','s16')}</button><button class="vs-tico" data-act="${v.mode==='cut'?'vsRestore':'vsCut'}" aria-label="${v.mode==='cut'?T('vsc.cmd_restore'):T('vsc.cmd_cut')}" title="${v.mode==='cut'?T('vsc.cmd_restore'):T('vsc.cmd_cut')}">${ic(v.mode==='cut'?'refresh':'slash','s16')}</button>`:''}</div>
+    <div class="vs-pbody">${v.tab==='terminal'?termBody:vsTree()}</div></div>`;
+  document.getElementById('vsc').innerHTML = `<div class="vs-title">projeto-api</div>
+   <div class="vs-body"><nav class="vs-act" aria-hidden="true">${ic('files')}${ic('search')}${ic('branch')}</nav><div class="vs-main">${edTabs}<div class="vs-editor" role="region" tabindex="0" aria-label="${v.pair && v.editor==='pair' ? T('vsc.pair_title') : 'server.ts'}">${editor}</div>${panel}</div></div>
+   <div class="vs-status"><span class="it">${ic('branch','s16')} main</span><span class="it">⊗ 0 ⚠ 0</span><span class="sp"></span><span class="it">Ln 7, Col 21</span>${vsStatusItem()}</div>
+   ${v.qp?vsQp():''}${vsModal()}${vsToasts()}`;
+  const apis = [['StatusBarItem', 'window.createStatusBarItem · backgroundColor = statusBarItem.warningBackground · contributes.icons'],
+    ['QuickPick','window.createQuickPick'],
+    ['WebviewPanel','window.createWebviewPanel · CSS var(--vscode-*)'],
+    ['Modal','window.showWarningMessage(msg, { modal: true, detail }, …)'],
+    ['TreeView','viewsContainers.panel + window.createTreeView + viewsWelcome + menus view/title'],
+    ['Terminal','contributes.terminal.profiles + registerTerminalProfileProvider → ExtensionTerminalOptions { name, pty, iconPath: ThemeIcon, color } + Pseudoterminal.onDidChangeName'],
+    ['Toast','window.showInformationMessage / showWarningMessage']];
+  document.getElementById('apiList').innerHTML = apis.map(a=>`<div><b>${a[0]}</b> · <code>${h(a[1])}</code></div>`).join('');
+}
+
+/* ---------- moldura ---------- */
+const PRESETS = [
+ ['proto.group_first',[
+  ['welcome',()=>{go('welcome',1);}],
+  ['security',()=>{go('security',1);}],
+  ['add_qr',()=>{S.addTab='qr';go('add',1);}],
+  ['add_qr_denied',()=>{S.addTab='qr';S.cameraDenied=true;go('add',1);}],
+  ['add_code',()=>{S.addTab='code';go('add',1);}],
+  ['add_code_full',()=>{S.addTab='code';S.code='482191372055';go('add',1);}],
+  ['pair_connecting',()=>{go('pairConnecting',1);}],
+  ['pair_verify',()=>{go('pairVerify',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='confirming';S.vs.modal='allow';}],
+  ['pair_success',()=>{go('pairSuccess',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='success';}],
+  ['err_expired',()=>{S.addTab='code';S.pairErr='expired';go('add',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='expired';}],
+  ['err_wrong',()=>{S.addTab='code';S.pairErr='wrong';go('add',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='wrong';}],
+  ['err_rejected',()=>{S.addTab='code';S.pairErr='rejected';go('add',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='rejected';}],
+  ['err_timeout',()=>{S.addTab='code';S.pairErr='timeout';go('add',1);}],
+  ['err_bridge',()=>{S.addTab='code';S.pairErr='bridge';go('add',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='bridge';}],
+ ]],
+ ['proto.group_daily',[
+  ['pcs',()=>{go('pcs',1);}],
+  ['sessions',()=>{go('sessions',1);}],
+  ['sessions_empty',()=>{S.emptySessions=true;go('sessions',1);}],
+  ['session_ro',()=>{S.sid='cc';go('session',1);}],
+  ['session_armed',()=>{S.sid='cc';S.armed.cc=Date.now()+5*60000;S.draft='npm run lint';go('session',1);}],
+  ['session_history',()=>{S.sid='cc';S.hist=1;S.histEnd=true;go('session',1);}],
+  ['session_stale',()=>{S.sid='cc';S.armed.cc=Date.now()+4*60000;S.draft='2';S.send='stale';go('session',1);}],
+  ['session_uncertain',()=>{S.sid='cc';S.armed.cc=Date.now()+4*60000;S.draft='git push';S.send='uncertain';S.net='reconnecting';go('session',1);}],
+  ['session_expiring',()=>{S.sid='cc';S.armed.cc=Date.now()+29000;go('session',1);S.snack={text:t('arm.expiring'),act:'openArm',actLabel:t('arm.extend')};}],
+  ['session_exited',()=>{S.sid='bd';go('session',1);}],
+  ['session_lost',()=>{S.sid='bd';S.lost=true;go('session',1);}],
+  ['arm',()=>{S.sid='cc';go('session',1);S.overlay='arm';}],
+  ['arm_bio',()=>{S.sid='cc';go('session',1);S.overlay='bio';S.bioFor='arm';}],
+  ['arm_nobio',()=>{S.sid='cc';S.noBio=true;go('session',1);S.overlay='arm';}],
+  ['arm_policy',()=>{S.sid='cc';S.policyOff=true;go('session',1);S.overlay='arm';}],
+  ['terminate',()=>{S.sid='be';go('session',1);S.overlay='terminate';}],
+ ]],
+ ['proto.group_attn',[
+  ['attn',()=>{go('attn',1);}],
+  ['attn_destructive',()=>{S.attnKind='destructive';go('attn',1);}],
+  ['attn_heuristic',()=>{S.attnSource='heuristic';go('attn',1);}],
+  ['attn_stale',()=>{S.attn='stale';go('attn',1);}],
+  ['attn_expired',()=>{S.attn='expired';go('attn',1);}],
+  ['attn_done',()=>{S.attn='allowed';go('attn',1);}],
+  ['notif',()=>{go('lock',1);}],
+ ]],
+ ['proto.group_security',[
+  ['devices',()=>{go('devices',1);}],
+  ['remove_pc',()=>{go('devices',1);S.overlay='remove';}],
+  ['settings',()=>{go('settings',1);}],
+ ]],
+ ['proto.group_global',[
+  ['no_network',()=>{S.net='none';go('pcs',1);}],
+  ['pc_offline',()=>{S.pc='offline';go('sessions',1);}],
+  ['bridge_down',()=>{S.net='bridge';go('pcs',1);}],
+  ['reconnecting',()=>{S.net='reconnecting';go('sessions',1);}],
+  ['revoked',()=>{go('revoked',1);S.vs.devices=S.vs.devices.filter(d=>d.id!=='p8');}],
+  ['cut',()=>{S.pc='cut';S.vs.mode='cut';go('sessions',1);}],
+  ['outdated',()=>{S.outdated=true;go('pcs',1);}],
+ ]],
+ ['proto.group_vscode',[
+  ['vs_normal',()=>{go('sessions',1);}],
+  ['vs_pair',()=>{S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='waiting';go('add',1);}],
+  ['vs_hidden',()=>{S.vs.pair=true;S.vs.editor='pair';S.vs.hidden=true;go('add',1);}],
+  ['vs_modal',()=>{go('pairVerify',1);S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='confirming';S.vs.modal='allow';}],
+  ['vs_pair_expired',()=>{S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='expired';S.pairErr='expired';go('add',1);}],
+  ['vs_pair_wrong',()=>{S.vs.pair=true;S.vs.editor='pair';S.vs.pairState='wrong';S.pairErr='wrong';go('add',1);}],
+  ['vs_armed',()=>{S.sid='cc';S.armed.cc=Date.now()+5*60000;go('session',1);S.vs.toasts=[{text:t('vsc.armed_toast',{device:'Pixel 8',session:'Claude Code',n:5}),act:'vsDisarm',actLabel:t('vsc.armed_toast_action')}];}],
+  ['vs_menu',()=>{S.armed.cc=Date.now()+5*60000;go('sessions',1);S.vs.qp=true;}],
+  ['vs_tree',()=>{go('sessions',1);S.vs.tab='pipa';}],
+  ['vs_revoke',()=>{go('sessions',1);S.vs.tab='pipa';S.vs.modal='revoke:p8';}],
+  ['vs_cut',()=>{S.pc='cut';S.vs.mode='cut';go('sessions',1);S.vs.toasts=[{text:t('vsc.cut_toast'),act:'vsRestore',actLabel:t('vsc.restore'),warn:true}];}],
+  ['vs_agent_off',()=>{S.vs.mode='agentOff';S.pc='offline';go('sessions',1);}],
+ ]],
+];
+function applyPreset(id){ const lang=S.lang; Object.assign(S, fresh()); S.lang=lang; S.stack=['pcs']; for(const [,items] of PRESETS) for(const [pid,fn] of items) if(pid===id){ fn(); } render(); }
+function renderChrome(){
+  document.documentElement.lang = S.lang==='pt'?'pt-BR':'en';
+  const set=(id,k)=>{ document.getElementById(id).textContent=t(k); };
+  set('protoHeading','proto.heading'); set('protoNote','proto.note'); set('lblLang','proto.lang'); set('lblTheme','proto.theme'); set('lblJump','proto.jump');
+  set('bThSys','proto.theme_system'); set('bThLight','proto.theme_light'); set('bThDark','proto.theme_dark'); set('bReset','proto.reset');
+  set('hPhone','proto.phone'); set('hVs','proto.vscode'); set('bSimClaim','proto.sim_claim'); set('bSimAttn','proto.sim_attn');
+  document.getElementById('bLangPt').setAttribute('aria-pressed', S.lang==='pt'); document.getElementById('bLangEn').setAttribute('aria-pressed', S.lang==='en');
+  const th = document.documentElement.getAttribute('data-theme')||'system';
+  ['bThSys','bThLight','bThDark'].forEach((id,i)=>document.getElementById(id).setAttribute('aria-pressed', ['system','light','dark'][i]===th));
+  const sel=document.getElementById('jump'); const cur=sel.value;
+  sel.innerHTML = PRESETS.map(([g,items])=>`<optgroup label="${T(g)}">${items.map(([id])=>`<option value="${id}">${T('proto.p_'+id)}</option>`).join('')}</optgroup>`).join('');
+  if(cur) sel.value=cur;
+}
+function render(){ const f=document.activeElement&&document.activeElement.id; renderChrome(); renderPhone(); renderVs(); tick(); if(f){ const el=document.getElementById(f); if(el) el.focus(); } }
+function fmtCode(d){ d=d.replace(/\D/g,'').slice(0,12); let o=d.slice(0,4); if(d.length>4) o+=' · '+d.slice(4,8); if(d.length>8) o+=' '+d.slice(8); return o; }
+
+/* ---------- ações ---------- */
+function toast(o){ S.vs.toasts=[o].concat(S.vs.toasts).slice(0,3); }
+function startPair(){ go('pairConnecting'); render(); setTimeout(()=>{ if(S.screen!=='pairConnecting') return; S.screen='pairVerify'; S.vs.pair=true; S.vs.editor='pair'; S.vs.pairState='confirming'; S.vs.modal='allow'; render(); }, 900); }
+function arm(){ S.armed[S.sid]=Date.now()+S.armMin*60000; S.overlay=null; S.send=null; S.snack={text:t('arm.done',{n:S.armMin})};
+  if(S.sid==='cc') toast({text:t('vsc.armed_toast',{device:'Pixel 8',session:sess(S.sid).name,n:S.armMin}),act:'vsDisarm',actLabel:t('vsc.armed_toast_action')}); }
+const ACT = {
+  noop(){}, back(){ back(); }, retry(){ S.net='ok'; },
+  go(a){ if(a==='add'){ S.pairErr=null; S.code=''; } go(a); },
+  addTab(a){ S.addTab=a; },
+  qrScan(){ startPair(); return 'skip'; },
+  pairCancel(){ S.vs.modal=null; S.vs.pairState='waiting'; back(); },
+  openSession(id){ S.sid=id; S.send=null; S.hist=0; S.histEnd=false; go('session'); },
+  openArm(){ S.overlay='arm'; S.snack=null; }, closeOverlay(){ S.overlay=null; },
+  armMin(n){ S.armMin=+n; }, armConfirm(){ S.bioFor='arm'; S.overlay='bio'; },
+  bioOk(){ if(S.bioFor==='arm') arm(); else if(S.bioFor==='attn'){ S.overlay=null; S.attn='sending'; setTimeout(()=>{ S.attn='allowed'; render(); },700); }
+    else if(S.bioFor==='terminate'){ S.overlay=null; S.snack={text:t('status.killed')+' · '+sess(S.sid).name}; } },
+  disarm(){ delete S.armed[S.sid]; S.snack={text:t('arm.expired')}; },
+  histLoad(){ S.histLoading=true; setTimeout(()=>{ S.histLoading=false; S.hist=1; S.histEnd=true; render(); },700); },
+  key(k){ if(!isArmed(S.sid)) { S.send=null; return; } S.snack={text:t('session.sent')+' '+({esc:'Esc',tab:'Tab',left:'←',up:'↑',down:'↓',right:'→',enter:'Enter',ctrlc:'Ctrl+C'}[k])}; },
+  go_attn(){},
+  attnAllow(){ if(S.attnKind==='destructive' || !isArmed('cc')){ S.bioFor='attn'; S.overlay='bio'; } else { S.attn='sending'; setTimeout(()=>{ S.attn='allowed'; render(); },700); } },
+  attnDeny(){ S.attn='sending'; setTimeout(()=>{ S.attn='denied'; render(); },600); },
+  openNotif(){ S.heads=false; go('attn'); },
+  openTerminate(){ S.overlay='terminate'; }, terminateConfirm(){ S.bioFor='terminate'; S.overlay='bio'; },
+  openRemove(){ S.overlay='remove'; }, removeConfirm(){ S.overlay=null; S.vs.devices=S.vs.devices.filter(d=>d.id!=='p8'); toast({text:t('vsc.revoked_toast',{device:'Pixel 8'})}); S.stack=[]; S.screen='welcome'; },
+  toggleShots(){ S.shots=!S.shots; }, toggleLock(){ S.appLock=!S.appLock; },
+  'settings.language'(v){ S.settingsLang=v; if(v!=='system') S.lang=v; },
+  'settings.theme'(v){ S.settingsTheme=v; setTheme(v); },
+  /* VS Code */
+  vsQp(){ S.vs.qp=!S.vs.qp; }, vsTab(a){ S.vs.tab=a; }, vsTerm(a){ S.vs.active=a; }, vsEditor(a){ S.vs.editor=a; },
+  vsPair(){ S.vs.qp=false; S.vs.pair=true; S.vs.editor='pair'; S.vs.pairState='waiting'; S.vs.pairEnd=Date.now()+5*60000; },
+  vsShowTree(){ S.vs.qp=false; S.vs.tab='pipa'; },
+  vsNewCode(){ S.vs.pairState='waiting'; S.vs.pairEnd=Date.now()+5*60000; },
+  vsHide(){ S.vs.hidden=!S.vs.hidden; },
+  vsAllow(){ S.vs.modal=null; S.vs.pairState='success'; S.vs.paired=true; if(!S.vs.devices.some(d=>d.name===S.deviceName)) S.vs.devices.unshift({id:'n'+Date.now(),name:S.deviceName,state:'connected'}); S.stack=[]; S.screen='pairSuccess'; },
+  vsDeny(){ S.vs.modal=null; S.vs.pairState='rejected'; S.addTab='code'; S.pairErr='rejected'; S.screen='add'; },
+  vsDisarm(){ S.vs.qp=false; delete S.armed.cc; S.vs.toasts=[]; toast({text:t('vsc.disarmed_toast',{device:'Pixel 8'})}); if(S.screen==='session'||S.screen==='sessions') S.snack={text:t('arm.disarmed_by_pc')}; },
+  vsCut(){ S.vs.qp=false; S.vs.mode='cut'; S.pc='cut'; S.armed={}; S.overlay=null; toast({text:t('vsc.cut_toast'),act:'vsRestore',actLabel:t('vsc.restore'),warn:true}); if(['session','attn'].includes(S.screen)) S.screen='sessions'; },
+  vsRestore(){ S.vs.qp=false; S.vs.mode='normal'; S.pc='online'; S.vs.toasts=[]; toast({text:t('vsc.restored_toast')}); },
+  vsStart(){ S.vs.mode='normal'; S.pc='online'; },
+  vsRevoke(id){ S.vs.modal='revoke:'+id; }, vsModalClose(){ S.vs.modal=null; },
+  vsRevokeYes(id){ const d=S.vs.devices.find(x=>x.id===id); S.vs.modal=null; S.vs.devices=S.vs.devices.filter(x=>x.id!==id); toast({text:t('vsc.revoked_toast',{device:d.name})}); if(d.name==='Pixel 8'||d.name===S.deviceName){ S.stack=[]; S.overlay=null; S.screen='revoked'; } },
+  vsToastClose(i){ S.vs.toasts.splice(+i,1); },
+  simClaim(){ if(S.screen!=='add'&&S.screen!=='welcome'){ S.stack=[]; S.screen='add'; } startPair(); return 'skip'; },
+  simAttn(){ S.attn='open'; S.heads=true; },
+};
+function setTheme(v){ if(v==='system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme',v); }
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-proto]');
+  if(p){ const [k,v]=p.dataset.proto.split(':'); if(k==='lang'){ S.lang=v; } if(k==='theme'){ setTheme(v); } if(k==='reset'){ const l=S.lang; Object.assign(S,fresh()); S.lang=l; document.getElementById('jump').value='welcome'; } render(); return; }
+  const el=e.target.closest('[data-act]'); if(!el) return;
+  if(el.hasAttribute('data-stop') ) return;
+  if(e.target.closest('[data-stop]') && el.classList.contains('scrim')) return;
+  if(el.getAttribute('aria-disabled')==='true'){ e.preventDefault(); const w=document.getElementById('sendWhy')||document.getElementById('codeLeft'); if(w) w.style.fontWeight='700'; return; }
+  const [k,...r]=el.dataset.act.split(':'); const a=r.join(':');
+  e.preventDefault();
+  if(k==='go'){ ACT.go(a); } else if(ACT[k]){ if(ACT[k](a)==='skip') return; }
+  render();
+});
+document.addEventListener('submit',e=>{ e.preventDefault(); const f=e.target.dataset.form;
+  if(f==='code'){ if(S.code.length===12){ S.pairErr=null; startPair(); } return; }
+  if(f==='send'){ if(!isArmed(S.sid)){ S.send='not_armed'; render(); return; } if(!S.draft.trim()) return; S.send='sending'; render();
+    setTimeout(()=>{ S.sent.push(S.draft); S.draft=''; S.send='sent'; render(); },600); }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='code'){ const d=e.target.value.replace(/\D/g,'').slice(0,12); S.code=d; e.target.value=fmtCode(d);
+    const full=d.length===12; document.getElementById('codeLeft').textContent = full?t('add.code_complete'):t('add.code_missing',{n:12-d.length});
+    document.getElementById('codeSubmit').setAttribute('aria-disabled', !full); }
+  if(e.target.id==='draft'){ S.draft=e.target.value; }
+  if(e.target.id==='dname'){ S.deviceName=e.target.value||'Pixel 8'; }
+});
+document.getElementById('jump').addEventListener('change',e=>applyPreset(e.target.value));
+function tick(){
+  const now=Date.now();
+  document.querySelectorAll('[data-until]').forEach(el=>{ el.textContent = t(el.dataset.fmt,{time:mmss(+el.dataset.until-now)}); });
+  let changed=false;
+  for(const k in S.armed){ if(S.armed[k]<=now){ delete S.armed[k]; changed=true; if(S.screen==='session'&&S.sid===k){ S.snack={text:t('arm.expired')}; if(S.draft) S.send=null; } } }
+  if(S.vs.pair && S.vs.pairState==='waiting' && S.vs.pairEnd<=now){ S.vs.pairState='expired'; changed=true; }
+  return changed;
+}
+setInterval(()=>{ if(tick()) render(); },1000);
+render();
+/* link direto para um estado: ...#session_armed */
+(function(){ const id=location.hash.slice(1); if(id && PRESETS.some(([,it])=>it.some(([p])=>p===id))){ applyPreset(id); document.getElementById('jump').value=id; } })();
+</script>
